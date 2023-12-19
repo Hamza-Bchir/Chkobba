@@ -7,10 +7,29 @@
 </head>
 <body>
     <div>
-        <a href="singlePlayer.html"><button>Singleplayer</button></a>
+        <button id="singlePlayerBtn">Singleplayer</button>
     </div>
     <div>
-        <button>Multiplayer</button>
+        <button id="multiPlayerBtn">Multiplayer</button>
     </div>
+    <script> 
+        const url = "http://127.0.0.1:5500/gameMode.html?";
+        const singlePlayerBtn = document.getElementById('singlePlayerBtn');
+        const multiPlayerBtn = document.getElementById('multiPlayerBtn');
+        let value='Lan=false';
+        singlePlayerBtn.addEventListener('click',()=>{
+            value = 'Lan=false';
+            let searchParams= new URLSearchParams(value);
+            let queryString = searchParams.toString();
+            window.location.href=url + queryString;
+        })
+        
+        multiPlayerBtn.addEventListener('click',()=>{
+            value='Lan=true';   
+            let searchParams = new URLSearchParams(value);
+            let queryString = searchParams.toString();
+            window.location.href=url+queryString;
+        })
+    </script>
 </body>
 </html>
