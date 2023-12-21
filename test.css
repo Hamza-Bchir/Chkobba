@@ -1,0 +1,25 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  .card {
+    width: 100px;
+    height: 150px;
+    border: 1px solid #000;
+    margin: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: box-shadow 0.3s ease-in-out; /* Add a transition for smooth effect */
+  }
+  
+  .card.selected {
+    box-shadow: 0 0 10px 5px #c6093f, 0 0 20px 10px #9c080d, 0 0 30px 15px #ff4800; /* Neon-like glow */
+  }
+  
