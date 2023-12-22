@@ -1,5 +1,6 @@
 let deck = []                // This is the main deck
 let isPlayerShooter= false;
+let isPlayerTurn=true;
 
 // Track of the score
 let playerScore = 0;
@@ -9,6 +10,9 @@ let aiScore = 0;
 let playerHand=[];           // Hands
 let aiHand=[];               // Hands
 let discardStack=[];         // Hands
+
+let playerConsumedCards=[];
+let aiConsumedCards=[];
 
 let isButtonClicked= false;
 
@@ -41,9 +45,8 @@ playGame = () => {
 
     // Use a promise to handle the asynchronous button click
     waitForButtonClick().then(() => {
-        console.log("Ci dija");
         toggleSelection();
-        console.log("Sahitek ya rajel");
+        console.log("Selection activated");
     });
 }
 
@@ -74,29 +77,23 @@ layButton=()=>{ // Must the selection functions before, so the player can choose
 }
 function handleLayEvent() {
     isButtonClicked = true;
-    const divDiscardStack = document.getElementById('discardStack');
     const divPlayer = document.getElementById('userCards');
-    
+
     if (playerHand.length === 0) {
         return;
-    } 
-    else if (playerHand.length === 1) {
+    }
+
+    let srcImage;
+
+    if (playerHand.length === 1) {
         const imageElements = divPlayer.querySelectorAll('img');
         if (imageElements.length > 0) {
-            let srcImage = imageElements[0].src;
-            divDiscardStack.append(cardImg);
-            addToDiscardStack(getCardFromSrc(srcImage)); // Need for function to remove from playerHand
+            srcImage = imageElements[0].src;
         }
-    } 
-    else if (playerHand.length > 1) {
+    } else if (playerHand.length > 1) {
         const cardsSelected = divPlayer.querySelectorAll('.selected');
         if (cardsSelected.length === 1) {
-            let srcImage = cardsSelected[0].src;
-            divPlayer.removeChild(cardsSelected[0]);
-            let cardImg = document.createElement('img');
-            cardImg.src = srcImage;
-            divDiscardStack.append(cardImg);
-            addToDiscardStack(getCardFromSrc(srcImage));
+            srcImage = cardsSelected[0].src;
         } else if (cardsSelected.length === 0) {
             alert('You must select at least one card');
         } else {
@@ -106,7 +103,15 @@ function handleLayEvent() {
             });
         }
     }
+
+    if (srcImage) {
+        addToDiscardStack(getCardFromSrc(srcImage));
+        removeFromPlayerHand(getCardFromSrc(srcImage));
+    }
+
+    display();
 }
+
 
 keepButton=()=>{
     const keepButton = document.getElementById('keepButton');
@@ -122,14 +127,41 @@ addToPlayerHand=(card)=>{          // Logical add
     playerHand.push(card);
 }
 addToAiHand=(card)=>{              // Logical add
-    if(aiHand.length==3)
+    if(aiHand.length===3)
         return;
     aiHand.push(card);
 }
 addToDiscardStack=(card)=>{       // Logical add
-    if(discardStack==4)
+    if(discardStack.length===4)
         return;
     discardStack.push(card);
+}
+
+addToPlayerConsumedCards=(card)=>{
+    playerConsumedCards.push(card);
+}
+addToAiConsumedCards=(card)=>{
+    aiConsumedCards.push(card);
+}
+
+
+removeFromPlayerHand=(card)=>{
+    indexCard = playerHand.indexOf(card);
+    if(indexCard !== -1){
+        playerHand.splice(indexCard,1);
+    }
+}
+removeFromAiHand=(card)=>{
+    indexCard = aiHand.indexOf(card);
+    if(indexCard !== -1){
+        aiHand.splice(indexCard,1);
+    }
+}
+removeFromDiscardStack=(card)=>{
+    indexCard = discardStack.indexOf(card);
+    if(indexCard !== -1){
+        discardStack.splice(indexCard,1);
+    }
 }
 
 toggleSelection=()=>{
