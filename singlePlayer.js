@@ -32,27 +32,14 @@ playGame = () => {
 
     if (isPlayerShooter) {
         let shootedCard = deck.pop();
-        let cardImg = document.createElement('img');
-        cardImg.src = './images/cards/' + shootedCard + '.png';
-        playerDiv.append(cardImg);
         addToPlayerHand(shootedCard);
+        display();
     }
 
     keepButton();
     layButton();
 
     // Use a promise to handle the asynchronous button click
-    const waitForButtonClick = () => {
-        return new Promise((resolve) => {
-            const intervalId = setInterval(() => {
-                if (isButtonClicked) {
-                    clearInterval(intervalId);
-                    resolve();
-                }
-            }, 100); // Check every 100 milliseconds
-        });
-    };
-
     waitForButtonClick().then(() => {
         console.log("Ci dija");
         toggleSelection();
@@ -85,40 +72,50 @@ layButton=()=>{ // Must the selection functions before, so the player can choose
     const layButton = document.getElementById('layButton');
     layButton.addEventListener('click', handleLayEvent);
 }
-function handleLayEvent(){
-    const cards = document.querySelectorAll('.playable');
-    if(playerHand.length===0){
+function handleLayEvent() {
+    isButtonClicked = true;
+    const divDiscardStack = document.getElementById('discardStack');
+    const divPlayer = document.getElementById('userCards');
+    
+    if (playerHand.length === 0) {
         return;
+    } 
+    else if (playerHand.length === 1) {
+        const imageElements = divPlayer.querySelectorAll('img');
+        if (imageElements.length > 0) {
+            let srcImage = imageElements[0].src;
+            divDiscardStack.append(cardImg);
+            addToDiscardStack(getCardFromSrc(srcImage)); // Need for function to remove from playerHand
+        }
+    } 
+    else if (playerHand.length > 1) {
+        const cardsSelected = divPlayer.querySelectorAll('.selected');
+        if (cardsSelected.length === 1) {
+            let srcImage = cardsSelected[0].src;
+            divPlayer.removeChild(cardsSelected[0]);
+            let cardImg = document.createElement('img');
+            cardImg.src = srcImage;
+            divDiscardStack.append(cardImg);
+            addToDiscardStack(getCardFromSrc(srcImage));
+        } else if (cardsSelected.length === 0) {
+            alert('You must select at least one card');
+        } else {
+            alert('You must select only one card to lay');
+            cardsSelected.forEach(card => {
+                card.classList.remove('selected');
+            });
+        }
     }
-    else if(playerHand.length===1){
-        const divDiscardStack= document.getElementById('discardStack');
-        const divPlayer= document.getElementById('userCards');
-        const imageElements=divPlayer.querySelectorAll('img');
-        let srcImage=imageElements[0].src;
-        divPlayer.removeChild(imageElements[0]);
-        let cardImg=document.createElement('img');
-        cardImg.src=srcImage;
-        divDiscardStack.append(cardImg);
-        addToDiscardStack(getCardFromSrc(srcImage));
-    }
-    else if(playerHand.length >1){
-        //Check selected cards => three possibilities
-    }
-    else if(playerHand.length===0){
-
-    }
-
-
 }
 
 keepButton=()=>{
     const keepButton = document.getElementById('keepButton');
     keepButton.addEventListener('click', handleKeepEvent);
 }
-
 function handleKeepEvent(){
     isButtonClicked=true;
 }
+
 addToPlayerHand=(card)=>{          // Logical add
     if(playerHand.length==3)
         return;
@@ -151,7 +148,6 @@ toggleSelection=()=>{
         })
     }
 }
-
 handleCardClick=(event)=>{
     const card = event.currentTarget;
     card.classList.toggle('selected');
@@ -162,4 +158,57 @@ getCardFromSrc=(cardSrc)=>{
     const endIndex= cardSrc.indexOf('.png');
     const cardValue = cardSrc.slice(startIndex,endIndex);
     return cardValue;
+}
+
+waitForButtonClick=()=>{
+    return new Promise((resolve) => {
+        const intervalId = setInterval(() => {
+            if (isButtonClicked) {
+                clearInterval(intervalId);
+                resolve();
+            }
+        }, 100); // Check every 100 milliseconds
+    });
+};
+
+deal=()=>{
+    for(i=0;i<3;i++){
+        if(aiHand.length<3){
+            addToAiHand(deck.pop);
+        }
+        if(playerHand.length<3){
+            addToPlayerHand(deck.pop);
+        }
+        if(discardStack.length<4){
+            addToDiscardStack(deck.pop);
+        }
+    }
+}
+
+display=()=>{ // Check hands remove all images and display over again accordingly to the hands's player
+    const divPlayer = document.getElementById('userCards');
+    const divDiscardStack = document.getElementById('discardStack');
+    const divAi = document.getElementById('aiCards');
+
+    divPlayer.innerHTML='';
+    divAi.innerHTML='';
+    divDiscardStack.innerHTML='';
+
+    for(i=0;i<playerHand.length;i++){
+        let cardImg = document.createElement('img');
+        cardImg.src ='./images/cards/'+playerHand[i]+'.png';
+        divPlayer.append(cardImg);
+    }
+
+    for(i=0;i<aiHand.length;i++){
+        let cardImg = document.createElement('img');
+        cardImg.src ='./images/cards/'+aiHand[i]+'.png';
+        divAi.append(cardImg);
+    }
+
+    for(i=0;i<discardStack.length;i++){
+        let cardImg = document.createElement('img');
+        cardImg.src ='./images/cards/'+discardStack[i]+'.png';
+        divDiscardStack.append(cardImg);
+    }
 }
