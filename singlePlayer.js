@@ -24,42 +24,89 @@ let gameModeValue=0;
 
 window.onload = function(){
     getGameModeValue();
-    console.log(gameModeValue)
     createDeck();
     isPlayerShooter();
-    console.log(isPlayerShooter);
     shuffleDeck();
     console.log(deck);
     playGame();
 }
 
 playGame = async () => {
-    keepButton();
     layButton();
-    await shooterPlay();
-    trayDeal();
-    playersDeal();/*
-    while((aiScore || playerScore) < gameModeValue){
+    while(aiScore < gameModeValue && playerScore < gameModeValue){
+        enableKeepButton();
         await shooterPlay();
+        disableKeepButton();
         trayDeal();
-        playersDeal();
         while(deck.length){
             playersDeal();
-            console.log('Players deal done')
             while(aiHand.length && playerHand.length){
                 await playerPlay();
-                console.log('Players play done')
             }
         }
-}*/
+        updateScore();
+    }
 }   
+
+playerPlay= async ()=>{
+    if(isPlayerTurn){
+        await waitForButtonClick(); // Tout se joue sur la variable isButtonClicked qui doit etre true dans les bonnes conditions
+    }
+    else{
+        // Bot plays here
+    }
+    isPlayerTurn= !isPlayerTurn;
+}
+
+updateScore=()=>{
+    const diamondCards = playerConsumedCards.filter((card) => getTypeFromCard(card) === 'D');
+    const sevenCards = playerConsumedCards.filter((card) => getValueFromCard(card) === 7);
+    const sixCards = playerConsumedCards.filter((card) => getValueFromCard(card) === 6);
+    const hayaCard = playerConsumedCards.includes('7-D');
+
+    if(diamondCards.length > 5){
+        playerScore++;
+    }
+    else if(diamondCards.length < 5){
+        aiScore++;
+    }
+
+    if(sevenCards.length > 2){
+        playerScore++;
+    }
+    else if(sevenCards.length ===2){
+        if(sixCards.length > 2){
+            playerScore++;
+        }
+        else if(sixCards.length < 2){
+            aiScore++;
+        }
+    }
+    else{
+        aiScore++;
+    }
+
+    if(hayaCard){
+        playerScore++;
+    }
+    else{
+        aiScore++;
+    }
+
+    if(playerConsumedCards.length > 20){
+        playerScore++;
+    }
+    else if(playerConsumedCards.length < 20){
+        aiScore++;
+    }
+}
+
 
 shooterPlay= async ()=>{
     let shootedCard = deck.pop();
-    if (isPlayerShooter) { // This could be a function shooterPlay which is different 
-        addToPlayerHand(shootedCard); // from playerPlay due to the difference between them, when 
-        display(); // the shooter is designated he can lay the card or keep it however in the 
-                    // playerPlay function he can't keep it (must consume cards or lay down the card)
+    if (isPlayerShooter) {  
+        addToPlayerHand(shootedCard);
+        display();
         await waitForButtonClick();
     }
     else{
@@ -67,6 +114,7 @@ shooterPlay= async ()=>{
         // Ai choose to keep or lay missing here
         display();
         sleep(3000);
+        isButtonClicked=false;
     }
         toggleSelection();
         console.log("Selection activated");
@@ -84,7 +132,7 @@ waitForButtonClick=()=>{
 };
 
 shuffleDeck=()=>{
-    for(i=0;i<deck.length;i++){
+    for(let i=0;i<deck.length;i++){
         let random=Math.floor(Math.random()*deck.length);
         let temp =deck[i];
         deck[i]=deck[random];
@@ -107,21 +155,12 @@ isPlayerShooter=()=>{
     }
 }
 
-playerPlay=()=>{
-    if(isPlayerTurn){
 
-    }
-    else{
-
-    }
-}
-
-layButton=()=>{ // Must the selection functions before, so the player can choose to lay a particular card
+layButton=()=>{
     const layButton = document.getElementById('layButton');
     layButton.addEventListener('click', handleLayEvent);
 }
 function handleLayEvent() {
-    isButtonClicked = true;
     const divPlayer = document.getElementById('userCards');
 
     if (playerHand.length === 0) {
@@ -135,15 +174,48 @@ function handleLayEvent() {
         if (imageElements.length > 0) {
             srcImage = imageElements[0].src;
         }
+        isButtonClicked = true;
     } else if (playerHand.length > 1) {
-        const cardsSelected = divPlayer.querySelectorAll('.selected');
-        if (cardsSelected.length === 1) {
-            srcImage = cardsSelected[0].src;
-        } else if (cardsSelected.length === 0) {
+        const playerCardsSelected = divPlayer.querySelectorAll('.selected');
+        const stackCardsSelected = document.getElementById('discardStack').querySelectorAll('.selected');
+        if (playerCardsSelected.length === 1) {
+            if(stackCardsSelected.length>0){ // Si le joueur a selectionné des cartes sur le tray
+                // si la somme de la valeur de stackCardsSelected === valeur de playerCardsSelected alors consommer cartes
+                let somme=0;
+                let playerCardValue =0;
+                for(let i=0;i<stackCardsSelected.length;i++){
+                    playerCardValue=getValueFromSrc(stackCardsSelected[i]);
+                    somme += playerCardValue;
+                }
+                if(somme===getValueFromSrc(playerCardsSelected[0].src)){
+                    //Consommation peut s'effectuer
+                    srcImage = playerCardsSelected[0].src;
+                    stackCardsSelected.forEach(card=>{
+                        removeFromDiscardStack(card);
+                        addToPlayerConsumedCards(card);
+                    });
+                    removeFromPlayerHand(getCardFromSrc(srcImage));
+                    srcImage = null;
+                    isButtonClicked = true;
+                }
+                else{
+                    alert('The sum for the cards are not equal');
+                    playerCardsSelected.forEach(card => {
+                        card.classList.remove('selected');
+                    });
+                    stackCardsSelected.forEach(card =>{
+                        card.classList.remove('selected');
+                    });
+                }
+            }
+            else{
+                srcImage = playerCardsSelected[0].src;
+            }
+        } else if (playerCardsSelected.length === 0) {
             alert('You must select at least one card');
         } else {
             alert('You must select only one card to lay');
-            cardsSelected.forEach(card => {
+            playerCardsSelected.forEach(card => {
                 card.classList.remove('selected');
             });
         }
@@ -157,29 +229,31 @@ function handleLayEvent() {
     display();
 }
 
-lay=()=>{} // A lay function could be useful, this will avoid to write addToDicardStack and removeFromXHand each time we need it
-
-keepButton=()=>{
-    const keepButton = document.getElementById('keepButton');
-    keepButton.addEventListener('click', handleKeepEvent);
-}
 function handleKeepEvent(){
     isButtonClicked=true;
 }
 
-addToPlayerHand=(card)=>{          // Logical add
+enableKeepButton=()=>{
+    const keepButton = document.getElementById('keepButton');
+    keepButton.addEventListener('click', handleKeepEvent);
+}
+
+disableKeepButton=()=>{
+    const keepButton = document.getElementById('keepButton');
+    keepButton.removeEventListener('click', handleKeepEvent);
+}
+
+addToPlayerHand=(card)=>{
     if(playerHand.length==3)
         return;
     playerHand.push(card);
 }
-addToAiHand=(card)=>{              // Logical add
+addToAiHand=(card)=>{
     if(aiHand.length===3)
         return;
     aiHand.push(card);
 }
-addToDiscardStack=(card)=>{       // Logical add
-    if(discardStack.length===4)
-        return;
+addToDiscardStack=(card)=>{
     discardStack.push(card);
 }
 
@@ -192,19 +266,19 @@ addToAiConsumedCards=(card)=>{
 
 
 removeFromPlayerHand=(card)=>{
-    indexCard = playerHand.indexOf(card);
+    let indexCard = playerHand.indexOf(card);
     if(indexCard !== -1){
         playerHand.splice(indexCard,1);
     }
 }
 removeFromAiHand=(card)=>{
-    indexCard = aiHand.indexOf(card);
+    let indexCard = aiHand.indexOf(card);
     if(indexCard !== -1){
         aiHand.splice(indexCard,1);
     }
 }
 removeFromDiscardStack=(card)=>{
-    indexCard = discardStack.indexOf(card);
+    let indexCard = discardStack.indexOf(card);
     if(indexCard !== -1){
         discardStack.splice(indexCard,1);
     }
@@ -212,7 +286,7 @@ removeFromDiscardStack=(card)=>{
 
 toggleSelection=()=>{
     isSelectionEnabled = !isSelectionEnabled;
-    const cards = document.querySelectorAll('.playable');
+    const cards = document.querySelectorAll('.playable img');
 
     if(!isSelectionEnabled){
         cards.forEach(card =>{
@@ -238,12 +312,54 @@ getCardFromSrc=(cardSrc)=>{
     return card;
 }
 getValueFromSrc=(cardSrc)=>{
-
+    let data= getCardFromSrc(cardSrc).split('-');
+    let value = data[0];
+    if(isNaN(value)){
+        switch(value){
+            case 'K':
+                return 10;
+            case 'Q':
+                return 8;
+            case 'J':
+                return 9;
+            case 'A':
+                return 1;
+            default:
+                console.log('Error value is NaN and not K,Q,J,A')
+        }
+    }
+    return parseInt(value);
 }
 getTypeFromSrc=(cardSrc)=>{
-
+    let data = getCardFromSrc(cardSrc).split('-');
+    let type = data[1];
+    return type;
 }
 
+getValueFromCard=(card)=>{
+    let data= card.split('-');
+    let value = data[0];
+    if(isNaN(value)){
+        switch(value){
+            case 'K':
+                return 10;
+            case 'Q':
+                return 8;
+            case 'J':
+                return 9;
+            case 'A':
+                return 1;
+            default:
+                console.log('Error value is NaN and not K,Q,J,A')
+        }
+    return parseInt(value);
+    }
+}
+getTypeFromCard=(card)=>{
+    let data = card.split('-');
+    let type = data[1];
+    return type;
+}
 
 
 playersDeal=()=>{
@@ -267,7 +383,7 @@ trayDeal=()=>{
     display();
 }
 
-display=()=>{ // Check hands remove all images and display over again accordingly to the hands's player
+display=()=>{
     const divPlayer = document.getElementById('userCards');
     const divDiscardStack = document.getElementById('discardStack');
     const divAi = document.getElementById('aiCards');
@@ -279,6 +395,8 @@ display=()=>{ // Check hands remove all images and display over again accordingl
     for(i=0;i<playerHand.length;i++){
         let cardImg = document.createElement('img');
         cardImg.src ='./images/cards/'+playerHand[i]+'.png';
+        cardImg.classList.add('playable');
+        cardImg.addEventListener('click', handleCardClick);
         divPlayer.append(cardImg);
     }
 
@@ -291,6 +409,8 @@ display=()=>{ // Check hands remove all images and display over again accordingl
     for(i=0;i<discardStack.length;i++){
         let cardImg = document.createElement('img');
         cardImg.src ='./images/cards/'+discardStack[i]+'.png';
+        cardImg.classList.add('playable');
+        cardImg.addEventListener('click', handleCardClick);
         divDiscardStack.append(cardImg);
     }
 }
