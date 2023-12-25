@@ -167,7 +167,7 @@ function handleLayEvent() {
         return;
     }
 
-    let srcImage;
+    let srcImage=null;
 
     if (playerHand.length === 1) {
         const imageElements = divPlayer.querySelectorAll('img');
@@ -175,26 +175,28 @@ function handleLayEvent() {
             srcImage = imageElements[0].src;
         }
         isButtonClicked = true;
-    } else if (playerHand.length > 1) {
+    } 
+
+    else if (playerHand.length > 1) {
         const playerCardsSelected = divPlayer.querySelectorAll('.selected');
         const stackCardsSelected = document.getElementById('discardStack').querySelectorAll('.selected');
         if (playerCardsSelected.length === 1) {
-            if(stackCardsSelected.length>0){ // Si le joueur a selectionné des cartes sur le tray
-                // si la somme de la valeur de stackCardsSelected === valeur de playerCardsSelected alors consommer cartes
+            if(stackCardsSelected.length>0){
                 let somme=0;
                 let playerCardValue =0;
                 for(let i=0;i<stackCardsSelected.length;i++){
-                    playerCardValue=getValueFromSrc(stackCardsSelected[i]);
+                    playerCardValue=getValueFromSrc(stackCardsSelected[i].src);
                     somme += playerCardValue;
                 }
                 if(somme===getValueFromSrc(playerCardsSelected[0].src)){
                     //Consommation peut s'effectuer
                     srcImage = playerCardsSelected[0].src;
                     stackCardsSelected.forEach(card=>{
-                        removeFromDiscardStack(card);
-                        addToPlayerConsumedCards(card);
+                        removeFromDiscardStack(getCardFromSrc(card.src));
+                        addToPlayerConsumedCards(getCardFromSrc(card.src));
                     });
                     removeFromPlayerHand(getCardFromSrc(srcImage));
+                    addToPlayerConsumedCards(getCardFromSrc(srcImage));
                     srcImage = null;
                     isButtonClicked = true;
                 }
@@ -278,6 +280,7 @@ removeFromAiHand=(card)=>{
     }
 }
 removeFromDiscardStack=(card)=>{
+    console.log('heyyy'+card)
     let indexCard = discardStack.indexOf(card);
     if(indexCard !== -1){
         discardStack.splice(indexCard,1);
@@ -306,6 +309,7 @@ handleCardClick=(event)=>{
 }
 
 getCardFromSrc=(cardSrc)=>{
+    
     const startIndex= cardSrc.indexOf('cards/')+'cards/'.length;
     const endIndex= cardSrc.indexOf('.png');
     const card = cardSrc.slice(startIndex,endIndex);
