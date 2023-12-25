@@ -18,9 +18,13 @@ let isButtonClicked= false;
 
 let isSelectionEnabled = false; 
 
+let gameModeValue=0;
+
 
 
 window.onload = function(){
+    getGameModeValue();
+    console.log(gameModeValue)
     createDeck();
     isPlayerShooter();
     console.log(isPlayerShooter);
@@ -29,26 +33,55 @@ window.onload = function(){
     playGame();
 }
 
-playGame = () => {
-    const playerDiv = document.getElementById('userCards');
-    const aiDiv = document.getElementById('aiCards');
-    const discardDiv = document.getElementById('discardStack');
-
-    if (isPlayerShooter) {
-        let shootedCard = deck.pop();
-        addToPlayerHand(shootedCard);
-        display();
-    }
-
+playGame = async () => {
     keepButton();
     layButton();
+    await shooterPlay();
+    trayDeal();
+    playersDeal();/*
+    while((aiScore || playerScore) < gameModeValue){
+        await shooterPlay();
+        trayDeal();
+        playersDeal();
+        while(deck.length){
+            playersDeal();
+            console.log('Players deal done')
+            while(aiHand.length && playerHand.length){
+                await playerPlay();
+                console.log('Players play done')
+            }
+        }
+}*/
+}   
 
-    // Use a promise to handle the asynchronous button click
-    waitForButtonClick().then(() => {
+shooterPlay= async ()=>{
+    let shootedCard = deck.pop();
+    if (isPlayerShooter) { // This could be a function shooterPlay which is different 
+        addToPlayerHand(shootedCard); // from playerPlay due to the difference between them, when 
+        display(); // the shooter is designated he can lay the card or keep it however in the 
+                    // playerPlay function he can't keep it (must consume cards or lay down the card)
+        await waitForButtonClick();
+    }
+    else{
+        addToAiHand(shootedCard);
+        // Ai choose to keep or lay missing here
+        display();
+        sleep(3000);
+    }
         toggleSelection();
         console.log("Selection activated");
-    });
 }
+
+waitForButtonClick=()=>{
+    return new Promise((resolve) => {
+        const intervalId = setInterval(() => {
+            if (isButtonClicked) {
+                clearInterval(intervalId);
+                resolve();
+            }
+        }, 100); // Check every 100 milliseconds
+    });
+};
 
 shuffleDeck=()=>{
     for(i=0;i<deck.length;i++){
@@ -68,7 +101,19 @@ createDeck=()=>{
     }
 }
 isPlayerShooter=()=>{
-    isPlayerShooter = Math.floor(Math.random()*2)===1 ? true : false; 
+    isPlayerShooter = Math.floor(Math.random()*2)===1 ? true : false;
+    if(isPlayerShooter === true){
+        isPlayerTurn= true;
+    }
+}
+
+playerPlay=()=>{
+    if(isPlayerTurn){
+
+    }
+    else{
+
+    }
 }
 
 layButton=()=>{ // Must the selection functions before, so the player can choose to lay a particular card
@@ -112,6 +157,7 @@ function handleLayEvent() {
     display();
 }
 
+lay=()=>{} // A lay function could be useful, this will avoid to write addToDicardStack and removeFromXHand each time we need it
 
 keepButton=()=>{
     const keepButton = document.getElementById('keepButton');
@@ -188,33 +234,37 @@ handleCardClick=(event)=>{
 getCardFromSrc=(cardSrc)=>{
     const startIndex= cardSrc.indexOf('cards/')+'cards/'.length;
     const endIndex= cardSrc.indexOf('.png');
-    const cardValue = cardSrc.slice(startIndex,endIndex);
-    return cardValue;
+    const card = cardSrc.slice(startIndex,endIndex);
+    return card;
+}
+getValueFromSrc=(cardSrc)=>{
+
+}
+getTypeFromSrc=(cardSrc)=>{
+
 }
 
-waitForButtonClick=()=>{
-    return new Promise((resolve) => {
-        const intervalId = setInterval(() => {
-            if (isButtonClicked) {
-                clearInterval(intervalId);
-                resolve();
-            }
-        }, 100); // Check every 100 milliseconds
-    });
-};
 
-deal=()=>{
+
+playersDeal=()=>{
     for(i=0;i<3;i++){
         if(aiHand.length<3){
-            addToAiHand(deck.pop);
+            addToAiHand(deck.pop());
         }
         if(playerHand.length<3){
-            addToPlayerHand(deck.pop);
-        }
-        if(discardStack.length<4){
-            addToDiscardStack(deck.pop);
+            addToPlayerHand(deck.pop());
         }
     }
+    display();
+}
+
+trayDeal=()=>{
+    for(i=0;i<4;i++){
+        if(discardStack.length<4){
+            addToDiscardStack(deck.pop());
+        }
+    }
+    display();
 }
 
 display=()=>{ // Check hands remove all images and display over again accordingly to the hands's player
@@ -234,7 +284,7 @@ display=()=>{ // Check hands remove all images and display over again accordingl
 
     for(i=0;i<aiHand.length;i++){
         let cardImg = document.createElement('img');
-        cardImg.src ='./images/cards/'+aiHand[i]+'.png';
+        cardImg.src ='./images/cards/BACK.png';
         divAi.append(cardImg);
     }
 
@@ -243,4 +293,16 @@ display=()=>{ // Check hands remove all images and display over again accordingl
         cardImg.src ='./images/cards/'+discardStack[i]+'.png';
         divDiscardStack.append(cardImg);
     }
+}
+
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+getGameModeValue=()=>{
+    let url = window.location.search;
+    let searchParams= new URLSearchParams(url);
+    const modeParam = searchParams.get('gamemode');
+    gameModeValue = modeParam.includes('classic') ? 21 : 11
 }
