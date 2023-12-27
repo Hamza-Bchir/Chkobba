@@ -6,6 +6,8 @@ let isPlayerTurn=true;
 let playerScore = 0;
 let aiScore = 0;
 
+let playerChkobbaCount=0;
+let aiChkobbaCount=0;
 
 let playerHand=[];           // Hands
 let aiHand=[];               // Hands
@@ -54,9 +56,60 @@ playerPlay= async ()=>{
         await waitForButtonClick(); // Tout se joue sur la variable isButtonClicked qui doit etre true dans les bonnes conditions
     }
     else{
-        // Bot plays here
+        let matchingValues= getMatchingValues();
+        console.log(matchingValues)
+        if(matchingValues.length==0){
+            if(aiHand.length==1){
+                removeFromAiHand(aiHand[0]);
+                addToDiscardStack(aiHand[0]);
+            }
+            else{
+                let minCard=getMinValue(aiHand);
+                removeFromAiHand(minCard);
+                addToDiscardStack(minCard);
+            }
+        }
+        else if(matchingValues.length==1){
+            if(discardStack.length==1){ // If last card on the tray Chkobba
+                aiChkobbaCount++; // Maybe i can put a function here which will increment the variable and display something on the screen
+            }
+            removeFromAiHand(matchingValues[0][0]);
+            removeFromDiscardStack(matchingValues[0][1]);
+            addToAiConsumedCards(matchingValues[0][0]);
+            addToAiConsumedCards(matchingValues[0][1]);
+        }
+        else{
+            if(searchIndexHaya(matchingValues)!=null){
+                let indexHaya=searchIndexHaya(matchingValues);
+                removeFromAiHand(matchingValues[indexHaya][0]);
+                removeFromDiscardStack(matchingValues[indexHaya][1]);
+                addToAiConsumedCards(matchingValues[indexHaya][0]);
+                addToAiConsumedCards(matchingValues[indexHaya][1]);
+            }
+            else if(searchIndexBermila(matchingValues)!=null){
+                let indexBermila=searchIndexBermila(matchingValues);
+                removeFromAiHand(matchingValues[indexBermila][0]);
+                removeFromDiscardStack(matchingValues[indexBermila][1]);
+                addToAiConsumedCards(matchingValues[indexBermila][0]);
+                addToAiConsumedCards(matchingValues[indexBermila][1]);
+            }
+            else if(searchIndexDineri!=null){
+                let indexDineri =searchIndexDineri(matchingValues);
+                console.log(matchingValues[indexDineri][0]);
+                removeFromAiHand(matchingValues[indexDineri][0]);
+                removeFromDiscardStack(matchingValues[indexDineri][1]);
+                addToAiConsumedCards(matchingValues[indexDineri][0]);
+                addToAiConsumedCards(matchingValues[indexDineri][1]);
+            }
+            else{
+                let maxCard=getMinValue(aiHand);
+                removeFromAiHand(maxCard);
+                addToDiscardStack(maxCard); 
+            }
+        }
     }
     isPlayerTurn= !isPlayerTurn;
+    display();
 }
 
 updateScore=()=>{
@@ -112,12 +165,15 @@ shooterPlay= async ()=>{
     }
     else{
         addToAiHand(shootedCard);
-        // Ai choose to keep or lay missing here
-        display();
-        sleep(3000);
+        if(getValueFromCard(shootedCard)<=5){
+            removeFromAiHand(shootedCard);
+            addToDiscardStack(shootedCard);
+            console.log('Lay',shootedCard);
+        }
         isButtonClicked=false;
     }
         toggleSelection();
+        display();
         console.log("Selection activated");
 }
 
@@ -281,7 +337,6 @@ removeFromAiHand=(card)=>{
     }
 }
 removeFromDiscardStack=(card)=>{
-    console.log('heyyy'+card)
     let indexCard = discardStack.indexOf(card);
     if(indexCard !== -1){
         discardStack.splice(indexCard,1);
@@ -430,4 +485,94 @@ getGameModeValue=()=>{
     let searchParams= new URLSearchParams(url);
     const modeParam = searchParams.get('gamemode');
     gameModeValue = modeParam.includes('classic') ? 21 : 11
+}
+
+getMatchingValues=()=>{
+    let arrayMatchingValues=[];
+    for(let i =0;i<discardStack.length;i++){
+        aiHand.forEach(card=>{
+            if(getValueFromCard(card)==getValueFromCard(discardStack[i])){
+                const matchingPair=[card,discardStack[i]];
+                arrayMatchingValues.push(matchingPair);
+            }
+        })
+    }
+    return arrayMatchingValues;
+}
+
+getMatchingValuesTypes=()=>{
+    let arrayMatchingValuesTypes=[];
+    for(let i =0;i<discardStack.length;i++){
+        aiHand.forEach(card =>{
+            if((getValueFromCard(card)==getValueFromCard(discardStack[i]) && (getTypeFromCard(card)==getTypeFromCard(discardStack[i]) ) ) ){
+                const matchingPair=[card,discardStack[i]];
+                arrayMatchingValuesTypes.push(matchingPair);
+            }
+        })
+    }
+    return arrayMatchingValuesTypes;
+}
+
+getMinValue=(arrayHand)=>{
+    let minCard=arrayHand[0];
+    arrayHand.forEach(card =>{
+        let currentValue=getValueFromCard(card);
+        let minValue=getValueFromCard(minCard);
+        if(currentValue<minValue){
+            minCard=card;
+        }
+    });
+    return minCard;
+}
+getMaxValue=(arrayHand)=>{
+    let maxCard=arrayHand[0];
+    arrayHand.forEach(card =>{
+        let currentValue=getValueFromCard(card);
+        let maxValue=getValueFromCard(maxCard);
+        if(currentValue>maxValue){
+            maxCard=card;
+        }
+    });
+    return maxCard;
+}
+searchIndexHaya=(matchingArray)=>{
+    for(let i=0;i<matchingArray.length;i++){
+        for(let j=0;j<2;j++){
+            if(matchingArray[i][j]=='7-D'){
+                return i;
+            }
+        }
+    }
+    return null;
+}
+
+searchIndexBermila=(matchingArray)=>{
+
+    for(let i=0;i<matchingArray.length;i++){
+        for(let j=0;j<2;j++){
+            if(getValueFromCard(matchingArray[i][j])==7){
+                return i;
+            }
+        }
+    }
+
+    for(let i=0;i<matchingArray.length;i++){
+        for(let j=0;j<2;j++){
+            if(getValueFromCard(matchingArray[i][j])==6){
+                return i;
+            }
+        }
+    }
+
+    return null;
+}
+searchIndexDineri=(matchingArray)=>{
+    for(let i=0;i<matchingArray.length;i++){
+        for(let j=0;j<2;j++){
+            if(getTypeFromCard(matchingArray[i][j])=='D'){
+                return i;
+            }
+        }
+    }
+    return null;
 }
