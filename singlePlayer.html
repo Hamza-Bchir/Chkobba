@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="./style.css">
     <title>Document</title>
 </head>
 <body>
     <section id="topSection">
         <div class="score">
-            <h1>Score :</h1>
+            <h1 class="lead text-center text-success bg-danger font-italic">Score: </h1>
         </div>
         <div class="cards" id="aiCards">
 
@@ -26,8 +27,8 @@
                 <!-- Image tags will be inserted dynamically by Javascript-->
             </div>
             <div>
-                <button id="keepButton">Keep</button>
-                <button id="layButton">Lay</button>
+                <button id="keepButton" class="btn btn-success">Keep</button>
+                <button id="layButton" class="btn btn-danger">Lay</button>
             </div>
         </div>
         <div>
@@ -38,8 +39,8 @@
     </section>
     <section id="bottomSection">
         <div>
-            <button>Quit</button>
-            <button>Restart</button>
+            <button id="Quit" class="btn btn-success">Quit</button>
+            <button id="Restart" class="btn btn-danger">Restart</button>
         </div>
         <div class="cards playable" id="userCards">
 
@@ -49,6 +50,9 @@
             <!--Image of back cards will be inserted dynamically by Javascript-->
         </div>
     </section>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="singlePlayer.js"></script>
 </body>
 </html>

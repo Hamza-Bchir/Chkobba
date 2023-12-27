@@ -201,7 +201,7 @@ function handleLayEvent() {
                     isButtonClicked = true;
                 }
                 else{
-                    alert('The sum for the cards are not equal');
+                    alert('The sum of cards is not equal');
                     playerCardsSelected.forEach(card => {
                         card.classList.remove('selected');
                     });
