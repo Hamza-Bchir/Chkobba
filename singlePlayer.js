@@ -45,6 +45,7 @@ playGame = async () => {
             }
         }
         updateScore();
+        console.log(aiScore, playerScore);
     }
 }   
 
