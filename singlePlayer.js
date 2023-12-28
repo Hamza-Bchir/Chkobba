@@ -26,8 +26,8 @@ let gameModeValue=0;
 
 window.onload = function(){
     getGameModeValue();
-    createDeck();
     isPlayerShooter();
+    createDeck();
     shuffleDeck();
     console.log(deck);
     playGame();
@@ -41,12 +41,18 @@ playGame = async () => {
         disableKeepButton();
         trayDeal();
         while(deck.length){
+            console.log("1AiHand: "+aiHand+' PlayerHand: '+playerHand +' discardStack: '+discardStack)
             playersDeal();
-            while(aiHand.length && playerHand.length){
+            console.log("2AiHand: "+aiHand+' PlayerHand: '+playerHand +' discardStack: '+discardStack)
+            console.log("Line 45:")
+            while(aiHand.length || playerHand.length){
+                console.log("Line 47:")
                 await playerPlay();
             }
         }
         updateScore();
+        createDeck();
+        shuffleDeck();
         console.log(aiScore, playerScore);
     }
 }   
@@ -62,8 +68,10 @@ playerPlay= async ()=>{
         console.log('Before ai play'+aiHand)
         if(matchingValues.length==0){
             if(aiHand.length==1){
-                removeFromAiHand(aiHand[0]);
+                console.log('this is it'+aiHand[0]+' this is the all hand'+aiHand)
                 addToDiscardStack(aiHand[0]);
+                removeFromAiHand(aiHand[0]);
+                console.log('After aiHand'+aiHand)
             }
             else{
                 let minCard=getMinValue(aiHand);
@@ -95,9 +103,9 @@ playerPlay= async ()=>{
                 addToAiConsumedCards(matchingValues[indexBermila][0]);
                 addToAiConsumedCards(matchingValues[indexBermila][1]);
             }
-            else if(searchIndexDineri!=null){
+            else if(searchIndexDineri(matchingValues)!=null){
                 let indexDineri =searchIndexDineri(matchingValues);
-                console.log('Line 100 Those are the matching value :' +matchingValues);
+                console.log('Line 100 Those are the matching value :' +matchingValues+"Indexdineri variable : "+indexDineri);
                 console.log(matchingValues[indexDineri][0]);
                 removeFromAiHand(matchingValues[indexDineri][0]);
                 removeFromDiscardStack(matchingValues[indexDineri][1]);
@@ -174,7 +182,7 @@ shooterPlay= async ()=>{
             addToDiscardStack(shootedCard);
             console.log('Lay',shootedCard);
         }
-        isButtonClicked=false;
+        isButtonClicked=true;
     }
         toggleSelection();
         display();
@@ -273,6 +281,7 @@ function handleLayEvent() {
                 }
             }
             else{
+                isButtonClicked = true;
                 srcImage = playerCardsSelected[0].src;
             }
         } else if (playerCardsSelected.length === 0) {
