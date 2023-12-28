@@ -52,12 +52,14 @@ playGame = async () => {
 }   
 
 playerPlay= async ()=>{
+    console.log("isButtonClicked :"+isButtonClicked+'  isPlayerTurn :'+isPlayerTurn)
     if(isPlayerTurn){
         await waitForButtonClick(); // Tout se joue sur la variable isButtonClicked qui doit etre true dans les bonnes conditions
     }
     else{
         let matchingValues= getMatchingValues();
-        console.log(matchingValues)
+        console.log(matchingValues+'Bot played');
+        console.log('Before ai play'+aiHand)
         if(matchingValues.length==0){
             if(aiHand.length==1){
                 removeFromAiHand(aiHand[0]);
@@ -95,6 +97,7 @@ playerPlay= async ()=>{
             }
             else if(searchIndexDineri!=null){
                 let indexDineri =searchIndexDineri(matchingValues);
+                console.log('Line 100 Those are the matching value :' +matchingValues);
                 console.log(matchingValues[indexDineri][0]);
                 removeFromAiHand(matchingValues[indexDineri][0]);
                 removeFromDiscardStack(matchingValues[indexDineri][1]);
@@ -107,6 +110,7 @@ playerPlay= async ()=>{
                 addToDiscardStack(maxCard); 
             }
         }
+        console.log('after ai play : '+aiHand);
     }
     isPlayerTurn= !isPlayerTurn;
     display();
@@ -182,6 +186,7 @@ waitForButtonClick=()=>{
         const intervalId = setInterval(() => {
             if (isButtonClicked) {
                 clearInterval(intervalId);
+                isButtonClicked=false;
                 resolve();
             }
         }, 100); // Check every 100 milliseconds
@@ -412,8 +417,8 @@ getValueFromCard=(card)=>{
             default:
                 console.log('Error value is NaN and not K,Q,J,A')
         }
-    return parseInt(value);
     }
+    return parseInt(value);
 }
 getTypeFromCard=(card)=>{
     let data = card.split('-');
@@ -491,7 +496,7 @@ getMatchingValues=()=>{
     let arrayMatchingValues=[];
     for(let i =0;i<discardStack.length;i++){
         aiHand.forEach(card=>{
-            if(getValueFromCard(card)==getValueFromCard(discardStack[i])){
+            if(getValueFromCard(card)===getValueFromCard(discardStack[i])){
                 const matchingPair=[card,discardStack[i]];
                 arrayMatchingValues.push(matchingPair);
             }
