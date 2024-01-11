@@ -1,30 +1,33 @@
 let deck = []                // This is the main deck
-let isPlayerShooter= false;
-let isPlayerTurn=true;
+let isPlayerShooter = false;
+let isPlayerTurn = true;
+let isPlayerLastAte = false;
 
 // Track of the score
 let playerScore = 0;
 let aiScore = 0;
 
-let playerChkobbaCount=0;
-let aiChkobbaCount=0;
+let playerChkobbaCount = 0;
+let aiChkobbaCount = 0;
 
-let playerHand=[];           // Hands
-let aiHand=[];               // Hands
-let discardStack=[];         // Hands
+let playerHand = [];           // Hands
+let aiHand = [];               // Hands
+let discardStack = [];         // Hands
 
-let playerConsumedCards=[];
-let aiConsumedCards=[];
+let playerConsumedCards = [];
+let aiConsumedCards = [];
 
-let isButtonClicked= false;
+let isButtonClicked = false;
 
-let isSelectionEnabled = false; 
+let isSelectionEnabled = false;
 
-let gameModeValue=0;
+let gameModeValue = 0;
 
 
 
-window.onload = function(){
+window.onload = function () {
+    quitButton();
+    restartButton();
     getGameModeValue();
     isPlayerShooter();
     createDeck();
@@ -35,198 +38,231 @@ window.onload = function(){
 
 playGame = async () => {
     layButton();
-    while(aiScore < gameModeValue && playerScore < gameModeValue){
+    while (aiScore < gameModeValue && playerScore < gameModeValue) {
         enableKeepButton();
         await shooterPlay();
         disableKeepButton();
         trayDeal();
-        while(deck.length){
-            console.log("1AiHand: "+aiHand+' PlayerHand: '+playerHand +' discardStack: '+discardStack)
+        aiConsumedCards=[];
+        playerConsumedCards=[];
+        aiChkobbaCount=0;
+        playerChkobbaCount=0;
+        while (deck.length) {
             playersDeal();
-            console.log("2AiHand: "+aiHand+' PlayerHand: '+playerHand +' discardStack: '+discardStack)
-            console.log("Line 45:")
-            while(aiHand.length || playerHand.length){
-                console.log("Line 47:")
+            while (aiHand.length || playerHand.length) {
                 await playerPlay();
             }
         }
+        console.log('isButtonClicked value1 = ',isButtonClicked);
+        console.log('this is the discard Stack before ! '+ discardStack)
+        trayCleaning();
+        console.log("this is the discard stack atfer !" + discardStack)
         updateScore();
         createDeck();
         shuffleDeck();
+        displayScore(); //ToDo
         console.log(aiScore, playerScore);
     }
-}   
+    displayWinner(); //ToDo
+    displayButtons(); //ToDo
+}
 
-playerPlay= async ()=>{
-    console.log("isButtonClicked :"+isButtonClicked+'  isPlayerTurn :'+isPlayerTurn)
-    if(isPlayerTurn){
+playerPlay = async () => {
+    console.log("isButtonClicked :" + isButtonClicked + '  isPlayerTurn :' + isPlayerTurn)
+    if (isPlayerTurn) {
         await waitForButtonClick(); // Tout se joue sur la variable isButtonClicked qui doit etre true dans les bonnes conditions
     }
-    else{
-        let matchingValues= getMatchingValues();
-        console.log(matchingValues+'Bot played');
-        console.log('Before ai play'+aiHand)
-        if(matchingValues.length==0){
-            if(aiHand.length==1){
-                console.log('this is it'+aiHand[0]+' this is the all hand'+aiHand)
+    else {
+        let matchingValues = getMatchingValues();
+        console.log(matchingValues + '<= Matching values and Bot played');
+        console.log('Before ai play' + aiHand)
+        if (matchingValues.length == 0) {
+            if (aiHand.length == 1) {
                 addToDiscardStack(aiHand[0]);
                 removeFromAiHand(aiHand[0]);
-                console.log('After aiHand'+aiHand)
+                console.log('After aiHand' + aiHand)
             }
-            else{
-                let minCard=getMinValue(aiHand);
+            else {
+                let minCard = getMinValue(aiHand);
                 removeFromAiHand(minCard);
                 addToDiscardStack(minCard);
             }
         }
-        else if(matchingValues.length==1){
-            if(discardStack.length==1){ // If last card on the tray Chkobba
+        else if (matchingValues.length == 1) {
+            if (discardStack.length == 1) { // If last card on the tray Chkobba
                 aiChkobbaCount++; // Maybe i can put a function here which will increment the variable and display something on the screen
             }
             removeFromAiHand(matchingValues[0][0]);
             removeFromDiscardStack(matchingValues[0][1]);
             addToAiConsumedCards(matchingValues[0][0]);
             addToAiConsumedCards(matchingValues[0][1]);
+            isPlayerLastAte = false;
         }
-        else{
-            if(searchIndexHaya(matchingValues)!=null){
-                let indexHaya=searchIndexHaya(matchingValues);
+        else {
+            if (searchIndexHaya(matchingValues) != null) {
+                let indexHaya = searchIndexHaya(matchingValues);
                 removeFromAiHand(matchingValues[indexHaya][0]);
                 removeFromDiscardStack(matchingValues[indexHaya][1]);
                 addToAiConsumedCards(matchingValues[indexHaya][0]);
                 addToAiConsumedCards(matchingValues[indexHaya][1]);
+                isPlayerLastAte = false;
             }
-            else if(searchIndexBermila(matchingValues)!=null){
-                let indexBermila=searchIndexBermila(matchingValues);
+            else if (searchIndexBermila(matchingValues) != null) {
+                let indexBermila = searchIndexBermila(matchingValues);
                 removeFromAiHand(matchingValues[indexBermila][0]);
                 removeFromDiscardStack(matchingValues[indexBermila][1]);
                 addToAiConsumedCards(matchingValues[indexBermila][0]);
                 addToAiConsumedCards(matchingValues[indexBermila][1]);
+                isPlayerLastAte = false;
             }
-            else if(searchIndexDineri(matchingValues)!=null){
-                let indexDineri =searchIndexDineri(matchingValues);
-                console.log('Line 100 Those are the matching value :' +matchingValues+"Indexdineri variable : "+indexDineri);
-                console.log(matchingValues[indexDineri][0]);
+            else if (searchIndexDineri(matchingValues) != null) {
+                let indexDineri = searchIndexDineri(matchingValues);
                 removeFromAiHand(matchingValues[indexDineri][0]);
                 removeFromDiscardStack(matchingValues[indexDineri][1]);
                 addToAiConsumedCards(matchingValues[indexDineri][0]);
                 addToAiConsumedCards(matchingValues[indexDineri][1]);
+                isPlayerLastAte = false;
             }
-            else{
-                let maxCard=getMinValue(aiHand);
-                removeFromAiHand(maxCard);
-                addToDiscardStack(maxCard); 
+            else {
+                let maxIndex = getMaxValueIndex(matchingValues);
+                removeFromAiHand(matchingValues[maxIndex][0]);
+                removeFromDiscardStack(matchingValues[maxIndex][1]);
+                addToAiConsumedCards(matchingValues[maxIndex][0]);
+                addToAiConsumedCards(matchingValues[maxIndex][1]);
             }
         }
-        console.log('after ai play : '+aiHand);
+        isButtonClicked=false;
+        console.log('after ai play : ' + aiHand);
     }
-    isPlayerTurn= !isPlayerTurn;
+    isPlayerTurn = !isPlayerTurn;
     display();
 }
 
-updateScore=()=>{
+trayCleaning = () => {
+    //console.log("This is the ai consumed cards: " + aiConsumedCards + ' And this the player consumed cards: ' + playerConsumedCards)
+    //console.log(aiConsumedCards.length+playerConsumedCards.length)
+    //console.log('isPlayerLastAte :'+isPlayerLastAte)
+    if (isPlayerLastAte) {
+        while (discardStack.length) {
+            addToPlayerConsumedCards(discardStack[0])
+            removeFromDiscardStack(discardStack[0])
+        }
+    }
+    else {
+        while (discardStack.length) {
+                addToPlayerConsumedCards(discardStack[0])
+                removeFromDiscardStack(discardStack[0])
+        }
+    }
+    display();
+    //console.log("This is the ai consumed cards: " + aiConsumedCards + ' And this the player consumed cards: ' + playerConsumedCards)
+    //console.log(aiConsumedCards.length+playerConsumedCards.length)
+    //console.log('isPlayerLastAte :'+isPlayerLastAte)
+}
+
+updateScore = () => {
     const diamondCards = playerConsumedCards.filter((card) => getTypeFromCard(card) === 'D');
     const sevenCards = playerConsumedCards.filter((card) => getValueFromCard(card) === 7);
     const sixCards = playerConsumedCards.filter((card) => getValueFromCard(card) === 6);
     const hayaCard = playerConsumedCards.includes('7-D');
 
-    if(diamondCards.length > 5){
+    if (diamondCards.length > 5) {
         playerScore++;
     }
-    else if(diamondCards.length < 5){
+    else if (diamondCards.length < 5) {
         aiScore++;
     }
 
-    if(sevenCards.length > 2){
+    if (sevenCards.length > 2) {
         playerScore++;
     }
-    else if(sevenCards.length ===2){
-        if(sixCards.length > 2){
+    else if (sevenCards.length === 2) {
+        if (sixCards.length > 2) {
             playerScore++;
         }
-        else if(sixCards.length < 2){
+        else if (sixCards.length < 2) {
             aiScore++;
         }
     }
-    else{
+    else {
         aiScore++;
     }
 
-    if(hayaCard){
+    if (hayaCard) {
         playerScore++;
     }
-    else{
+    else {
         aiScore++;
     }
 
-    if(playerConsumedCards.length > 20){
+    if (playerConsumedCards.length > 20) {
         playerScore++;
     }
-    else if(playerConsumedCards.length < 20){
+    else if (playerConsumedCards.length < 20) {
         aiScore++;
     }
 }
 
 
-shooterPlay= async ()=>{
+shooterPlay = async () => {
     let shootedCard = deck.pop();
-    if (isPlayerShooter) {  
+    if (isPlayerShooter) {
         addToPlayerHand(shootedCard);
         display();
         await waitForButtonClick();
     }
-    else{
+    else {
         addToAiHand(shootedCard);
-        if(getValueFromCard(shootedCard)<=5){
+        if (getValueFromCard(shootedCard) <= 5) {
             removeFromAiHand(shootedCard);
             addToDiscardStack(shootedCard);
-            console.log('Lay',shootedCard);
+            console.log('Lay', shootedCard);
         }
-        isButtonClicked=true;
+        isButtonClicked = true;
     }
-        toggleSelection();
-        display();
-        console.log("Selection activated");
+    toggleSelection();
+    display();
+    console.log("Selection activated");
 }
 
-waitForButtonClick=()=>{
+waitForButtonClick = () => {
     return new Promise((resolve) => {
         const intervalId = setInterval(() => {
             if (isButtonClicked) {
                 clearInterval(intervalId);
-                isButtonClicked=false;
+                isButtonClicked = false;
                 resolve();
             }
         }, 100); // Check every 100 milliseconds
     });
 };
 
-shuffleDeck=()=>{
-    for(let i=0;i<deck.length;i++){
-        let random=Math.floor(Math.random()*deck.length);
-        let temp =deck[i];
-        deck[i]=deck[random];
-        deck[random]=temp;
+shuffleDeck = () => {
+    for (let i = 0; i < deck.length; i++) {
+        let random = Math.floor(Math.random() * deck.length);
+        let temp = deck[i];
+        deck[i] = deck[random];
+        deck[random] = temp;
     }
 }
-createDeck=()=>{
-    const cardType=['C','D','H','S'];
-    const cardValue=['A','2','3','4','5','6','7','Q','J','K'];
-    for(i=0;i<4;i++){
-        for(j=0;j<10;j++){
-            deck.push(cardValue[j]+'-'+cardType[i]);
+createDeck = () => {
+    const cardType = ['C', 'D', 'H', 'S'];
+    const cardValue = ['A', '2', '3', '4', '5', '6', '7', 'Q', 'J', 'K'];
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 10; j++) {
+            deck.push(cardValue[j] + '-' + cardType[i]);
         }
     }
 }
-isPlayerShooter=()=>{
-    isPlayerShooter = Math.floor(Math.random()*2)===1 ? true : false;
-    if(isPlayerShooter === true){
-        isPlayerTurn= true;
+isPlayerShooter = () => {
+    isPlayerShooter = Math.floor(Math.random() * 2) === 1 ? true : false;
+    if (isPlayerShooter === true) {
+        isPlayerTurn = true;
     }
 }
 
 
-layButton=()=>{
+layButton = () => {
     const layButton = document.getElementById('layButton');
     layButton.addEventListener('click', handleLayEvent);
 }
@@ -237,7 +273,7 @@ function handleLayEvent() {
         return;
     }
 
-    let srcImage=null;
+    let srcImage = null;
 
     if (playerHand.length === 1) {
         const imageElements = divPlayer.querySelectorAll('img');
@@ -245,23 +281,24 @@ function handleLayEvent() {
             srcImage = imageElements[0].src;
         }
         isButtonClicked = true;
-    } 
+        console.log('Player played');
+    }
 
     else if (playerHand.length > 1) {
         const playerCardsSelected = divPlayer.querySelectorAll('.selected');
         const stackCardsSelected = document.getElementById('discardStack').querySelectorAll('.selected');
         if (playerCardsSelected.length === 1) {
-            if(stackCardsSelected.length>0){
-                let somme=0;
-                let playerCardValue =0;
-                for(let i=0;i<stackCardsSelected.length;i++){
-                    playerCardValue=getValueFromSrc(stackCardsSelected[i].src);
+            if (stackCardsSelected.length > 0) {
+                let somme = 0;
+                let playerCardValue = 0;
+                for (let i = 0; i < stackCardsSelected.length; i++) {
+                    playerCardValue = getValueFromSrc(stackCardsSelected[i].src);
                     somme += playerCardValue;
                 }
-                if(somme===getValueFromSrc(playerCardsSelected[0].src)){
+                if (somme === getValueFromSrc(playerCardsSelected[0].src)) {
                     //Consommation peut s'effectuer
                     srcImage = playerCardsSelected[0].src;
-                    stackCardsSelected.forEach(card=>{
+                    stackCardsSelected.forEach(card => {
                         removeFromDiscardStack(getCardFromSrc(card.src));
                         addToPlayerConsumedCards(getCardFromSrc(card.src));
                     });
@@ -269,19 +306,22 @@ function handleLayEvent() {
                     addToPlayerConsumedCards(getCardFromSrc(srcImage));
                     srcImage = null;
                     isButtonClicked = true;
+                    isPlayerLastAte = true;
+                    console.log('Player played');
                 }
-                else{
+                else {
                     alert('The sum of cards is not equal');
                     playerCardsSelected.forEach(card => {
                         card.classList.remove('selected');
                     });
-                    stackCardsSelected.forEach(card =>{
+                    stackCardsSelected.forEach(card => {
                         card.classList.remove('selected');
                     });
                 }
             }
-            else{
+            else {
                 isButtonClicked = true;
+                console.log('Player played');
                 srcImage = playerCardsSelected[0].src;
             }
         } else if (playerCardsSelected.length === 0) {
@@ -302,94 +342,95 @@ function handleLayEvent() {
     display();
 }
 
-function handleKeepEvent(){
-    isButtonClicked=true;
+function handleKeepEvent() {
+    isButtonClicked = true;
+    console.log('Player played');
 }
 
-enableKeepButton=()=>{
+enableKeepButton = () => {
     const keepButton = document.getElementById('keepButton');
     keepButton.addEventListener('click', handleKeepEvent);
 }
 
-disableKeepButton=()=>{
+disableKeepButton = () => {
     const keepButton = document.getElementById('keepButton');
     keepButton.removeEventListener('click', handleKeepEvent);
 }
 
-addToPlayerHand=(card)=>{
-    if(playerHand.length==3)
+addToPlayerHand = (card) => {
+    if (playerHand.length == 3)
         return;
     playerHand.push(card);
 }
-addToAiHand=(card)=>{
-    if(aiHand.length===3)
+addToAiHand = (card) => {
+    if (aiHand.length === 3)
         return;
     aiHand.push(card);
 }
-addToDiscardStack=(card)=>{
+addToDiscardStack = (card) => {
     discardStack.push(card);
 }
 
-addToPlayerConsumedCards=(card)=>{
+addToPlayerConsumedCards = (card) => {
     playerConsumedCards.push(card);
 }
-addToAiConsumedCards=(card)=>{
+addToAiConsumedCards = (card) => {
     aiConsumedCards.push(card);
 }
 
 
-removeFromPlayerHand=(card)=>{
+removeFromPlayerHand = (card) => {
     let indexCard = playerHand.indexOf(card);
-    if(indexCard !== -1){
-        playerHand.splice(indexCard,1);
+    if (indexCard !== -1) {
+        playerHand.splice(indexCard, 1);
     }
 }
-removeFromAiHand=(card)=>{
+removeFromAiHand = (card) => {
     let indexCard = aiHand.indexOf(card);
-    if(indexCard !== -1){
-        aiHand.splice(indexCard,1);
+    if (indexCard !== -1) {
+        aiHand.splice(indexCard, 1);
     }
 }
-removeFromDiscardStack=(card)=>{
+removeFromDiscardStack = (card) => {
     let indexCard = discardStack.indexOf(card);
-    if(indexCard !== -1){
-        discardStack.splice(indexCard,1);
+    if (indexCard !== -1) {
+        discardStack.splice(indexCard, 1);
     }
 }
 
-toggleSelection=()=>{
+toggleSelection = () => {
     isSelectionEnabled = !isSelectionEnabled;
     const cards = document.querySelectorAll('.playable img');
 
-    if(!isSelectionEnabled){
-        cards.forEach(card =>{
+    if (!isSelectionEnabled) {
+        cards.forEach(card => {
             card.classList.remove('selected');
-            card.removeEventListener('click',handleCardClick);
+            card.removeEventListener('click', handleCardClick);
         })
     }
-    else{
-        cards.forEach(card=>{
+    else {
+        cards.forEach(card => {
             card.addEventListener('click', handleCardClick);
         })
     }
 }
-handleCardClick=(event)=>{
+handleCardClick = (event) => {
     const card = event.currentTarget;
     card.classList.toggle('selected');
 }
 
-getCardFromSrc=(cardSrc)=>{
-    
-    const startIndex= cardSrc.indexOf('cards/')+'cards/'.length;
-    const endIndex= cardSrc.indexOf('.png');
-    const card = cardSrc.slice(startIndex,endIndex);
+getCardFromSrc = (cardSrc) => {
+
+    const startIndex = cardSrc.indexOf('cards/') + 'cards/'.length;
+    const endIndex = cardSrc.indexOf('.png');
+    const card = cardSrc.slice(startIndex, endIndex);
     return card;
 }
-getValueFromSrc=(cardSrc)=>{
-    let data= getCardFromSrc(cardSrc).split('-');
+getValueFromSrc = (cardSrc) => {
+    let data = getCardFromSrc(cardSrc).split('-');
     let value = data[0];
-    if(isNaN(value)){
-        switch(value){
+    if (isNaN(value)) {
+        switch (value) {
             case 'K':
                 return 10;
             case 'Q':
@@ -404,17 +445,17 @@ getValueFromSrc=(cardSrc)=>{
     }
     return parseInt(value);
 }
-getTypeFromSrc=(cardSrc)=>{
+getTypeFromSrc = (cardSrc) => {
     let data = getCardFromSrc(cardSrc).split('-');
     let type = data[1];
     return type;
 }
 
-getValueFromCard=(card)=>{
-    let data= card.split('-');
+getValueFromCard = (card) => {
+    let data = card.split('-');
     let value = data[0];
-    if(isNaN(value)){
-        switch(value){
+    if (isNaN(value)) {
+        switch (value) {
             case 'K':
                 return 10;
             case 'Q':
@@ -429,60 +470,60 @@ getValueFromCard=(card)=>{
     }
     return parseInt(value);
 }
-getTypeFromCard=(card)=>{
+getTypeFromCard = (card) => {
     let data = card.split('-');
     let type = data[1];
     return type;
 }
 
 
-playersDeal=()=>{
-    for(i=0;i<3;i++){
-        if(aiHand.length<3){
+playersDeal = () => {
+    for (i = 0; i < 3; i++) {
+        if (aiHand.length < 3) {
             addToAiHand(deck.pop());
         }
-        if(playerHand.length<3){
+        if (playerHand.length < 3) {
             addToPlayerHand(deck.pop());
         }
     }
     display();
 }
 
-trayDeal=()=>{
-    for(i=0;i<4;i++){
-        if(discardStack.length<4){
+trayDeal = () => {
+    for (i = 0; i < 4; i++) {
+        if (discardStack.length < 4) {
             addToDiscardStack(deck.pop());
         }
     }
     display();
 }
 
-display=()=>{
+display = () => {
     const divPlayer = document.getElementById('userCards');
     const divDiscardStack = document.getElementById('discardStack');
     const divAi = document.getElementById('aiCards');
 
-    divPlayer.innerHTML='';
-    divAi.innerHTML='';
-    divDiscardStack.innerHTML='';
+    divPlayer.innerHTML = '';
+    divAi.innerHTML = '';
+    divDiscardStack.innerHTML = '';
 
-    for(i=0;i<playerHand.length;i++){
+    for (i = 0; i < playerHand.length; i++) {
         let cardImg = document.createElement('img');
-        cardImg.src ='./images/cards/'+playerHand[i]+'.png';
+        cardImg.src = './images/cards/' + playerHand[i] + '.png';
         cardImg.classList.add('playable');
         cardImg.addEventListener('click', handleCardClick);
         divPlayer.append(cardImg);
     }
 
-    for(i=0;i<aiHand.length;i++){
+    for (i = 0; i < aiHand.length; i++) {
         let cardImg = document.createElement('img');
-        cardImg.src ='./images/cards/BACK.png';
+        cardImg.src = './images/cards/BACK.png';
         divAi.append(cardImg);
     }
 
-    for(i=0;i<discardStack.length;i++){
+    for (i = 0; i < discardStack.length; i++) {
         let cardImg = document.createElement('img');
-        cardImg.src ='./images/cards/'+discardStack[i]+'.png';
+        cardImg.src = './images/cards/' + discardStack[i] + '.png';
         cardImg.classList.add('playable');
         cardImg.addEventListener('click', handleCardClick);
         divDiscardStack.append(cardImg);
@@ -492,21 +533,21 @@ display=()=>{
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
-  }
+}
 
-getGameModeValue=()=>{
+getGameModeValue = () => {
     let url = window.location.search;
-    let searchParams= new URLSearchParams(url);
+    let searchParams = new URLSearchParams(url);
     const modeParam = searchParams.get('gamemode');
     gameModeValue = modeParam.includes('classic') ? 21 : 11
 }
 
-getMatchingValues=()=>{
-    let arrayMatchingValues=[];
-    for(let i =0;i<discardStack.length;i++){
-        aiHand.forEach(card=>{
-            if(getValueFromCard(card)===getValueFromCard(discardStack[i])){
-                const matchingPair=[card,discardStack[i]];
+getMatchingValues = () => {
+    let arrayMatchingValues = [];
+    for (let i = 0; i < discardStack.length; i++) {
+        aiHand.forEach(card => {
+            if (getValueFromCard(card) === getValueFromCard(discardStack[i])) {
+                const matchingPair = [card, discardStack[i]];
                 arrayMatchingValues.push(matchingPair);
             }
         })
@@ -514,12 +555,12 @@ getMatchingValues=()=>{
     return arrayMatchingValues;
 }
 
-getMatchingValuesTypes=()=>{
-    let arrayMatchingValuesTypes=[];
-    for(let i =0;i<discardStack.length;i++){
-        aiHand.forEach(card =>{
-            if((getValueFromCard(card)==getValueFromCard(discardStack[i]) && (getTypeFromCard(card)==getTypeFromCard(discardStack[i]) ) ) ){
-                const matchingPair=[card,discardStack[i]];
+getMatchingValuesTypes = () => {
+    let arrayMatchingValuesTypes = [];
+    for (let i = 0; i < discardStack.length; i++) {
+        aiHand.forEach(card => {
+            if ((getValueFromCard(card) == getValueFromCard(discardStack[i]) && (getTypeFromCard(card) == getTypeFromCard(discardStack[i])))) {
+                const matchingPair = [card, discardStack[i]];
                 arrayMatchingValuesTypes.push(matchingPair);
             }
         })
@@ -527,32 +568,30 @@ getMatchingValuesTypes=()=>{
     return arrayMatchingValuesTypes;
 }
 
-getMinValue=(arrayHand)=>{
-    let minCard=arrayHand[0];
-    arrayHand.forEach(card =>{
-        let currentValue=getValueFromCard(card);
-        let minValue=getValueFromCard(minCard);
-        if(currentValue<minValue){
-            minCard=card;
+getMinValue = (arrayHand) => {
+    let minCard = arrayHand[0];
+    arrayHand.forEach(card => {
+        let currentValue = getValueFromCard(card);
+        let minValue = getValueFromCard(minCard);
+        if (currentValue < minValue) {
+            minCard = card;
         }
     });
     return minCard;
 }
-getMaxValue=(arrayHand)=>{
-    let maxCard=arrayHand[0];
-    arrayHand.forEach(card =>{
-        let currentValue=getValueFromCard(card);
-        let maxValue=getValueFromCard(maxCard);
-        if(currentValue>maxValue){
-            maxCard=card;
+getMaxValueIndex = (matchingValues) => {
+    let maxIndex = 0;
+    for (let i = 0; i < matchingValues.length; i++) {
+        if (getValueFromCard(matchingValues[i][0]) > getValueFromCard(matchingValues[maxIndex][0])) {
+            maxIndex = i;
         }
-    });
-    return maxCard;
+    }
+    return maxIndex;
 }
-searchIndexHaya=(matchingArray)=>{
-    for(let i=0;i<matchingArray.length;i++){
-        for(let j=0;j<2;j++){
-            if(matchingArray[i][j]=='7-D'){
+searchIndexHaya = (matchingArray) => {
+    for (let i = 0; i < matchingArray.length; i++) {
+        for (let j = 0; j < 2; j++) {
+            if (matchingArray[i][j] == '7-D') {
                 return i;
             }
         }
@@ -560,33 +599,74 @@ searchIndexHaya=(matchingArray)=>{
     return null;
 }
 
-searchIndexBermila=(matchingArray)=>{
+searchIndexBermila = (matchingArray) => {
 
-    for(let i=0;i<matchingArray.length;i++){
-        for(let j=0;j<2;j++){
-            if(getValueFromCard(matchingArray[i][j])==7){
+    for (let i = 0; i < matchingArray.length; i++) {
+        for (let j = 0; j < 2; j++) {
+            if (getValueFromCard(matchingArray[i][j]) == 7) {
                 return i;
             }
         }
     }
 
-    for(let i=0;i<matchingArray.length;i++){
-        for(let j=0;j<2;j++){
-            if(getValueFromCard(matchingArray[i][j])==6){
+    for (let i = 0; i < matchingArray.length; i++) {
+        for (let j = 0; j < 2; j++) {
+            if (getValueFromCard(matchingArray[i][j]) == 6) {
                 return i;
             }
         }
     }
 
+    return null;
+} 
+searchIndexDineri = (matchingArray) => {
+    for (let i = 0; i < matchingArray.length; i++) {
+        for (let j = 0; j < 2; j++) {
+            if (getTypeFromCard(matchingArray[i][j]) == 'D') {
+                return i;
+            }
+        }
+    }
     return null;
 }
-searchIndexDineri=(matchingArray)=>{
-    for(let i=0;i<matchingArray.length;i++){
-        for(let j=0;j<2;j++){
-            if(getTypeFromCard(matchingArray[i][j])=='D'){
-                return i;
-            }
-        }
+
+function displayWinner() {
+
+    var winnerMessageElement = document.getElementById("winner-message");
+    var winnerNameElement = document.getElementById("winner-name");
+
+    if(playerScore>aiScore){
+        let winnerName = 'ربحت يا وحش';
+        winnerNameElement.textContent = winnerName;
     }
-    return null;
+    else{
+        let winnerName =  'للأسف خسرت';
+        winnerNameElement.textContent = winnerName;
+
+    }
+    winnerMessageElement.style.display = "block";
+}
+
+
+displayScore =() =>{
+    scoreTitleElement= document.getElementById('score');
+    scoreTitleElement.innerHTML='Score: Bot : '+aiScore+' Player : '+playerScore;
+}
+
+restartButton =()=>{
+    const restartElement = document.getElementById('Restart');
+    restartElement.addEventListener('click', restartButtonEvent);
+}
+function restartButtonEvent(){
+    location.reload();
+    console.log('you clicked')
+}
+
+quitButton = ()=>{
+    const quitElement = document.getElementById('Quit');
+    quitElement.addEventListener('click',quitEvent);
+}
+
+function quitEvent(){
+    window.location.href='http://127.0.0.1:5500/';
 }
