@@ -14,7 +14,7 @@ img {
     margin: 1px;
 }
 button {
-    width: 60px;
+    width: 70px;
     height: 50px;
     font-size: 15px;
 }
@@ -31,7 +31,7 @@ section{
 #middleSection{
     display:flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content:center;
 }
 #bottomSection{
     justify-content: space-between;
