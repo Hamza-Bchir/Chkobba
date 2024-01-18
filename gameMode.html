@@ -9,10 +9,10 @@
 </head>
 <body>
     <div>
-        <button id="classicbtn" class="btn btn-success">Classic</button>
+        <button id="classicBtn" class="btn-lg btn-success">Classic</button>
     </div>
     <div>
-        <button id="expressbtn" class="btn btn-danger">Express</button>
+        <button id="expressBtn" class="btn-lg btn-danger">Express</button>
     </div>
     <script>
         let url = window.location.search;
@@ -30,18 +30,18 @@
             url='http://127.0.0.1:5500/Doesnotexist.html'
         }
 
-        const classicbtn = document.getElementById('classicbtn');
-        const expressbtn = document.getElementById('expressbtn');
+        const classicBtn = document.getElementById('classicBtn');
+        const expressBtn = document.getElementById('expressBtn');
         let value = 'gamemode=classic'
 
-        classicbtn.addEventListener('click',()=>{
+        classicBtn.addEventListener('click',()=>{
             value='gamemode=classic';
             let searchParams = new URLSearchParams(value);
             let queryString = searchParams.toString();
             window.location.href=url + queryString;
         })
 
-        expressbtn.addEventListener('click',()=>{
+        expressBtn.addEventListener('click',()=>{
             value='gamemode=express';
             let searchParams = new URLSearchParams(value);
             let queryString = searchParams.toString();

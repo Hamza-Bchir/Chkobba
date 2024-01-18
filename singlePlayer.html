@@ -8,15 +8,15 @@
     <title>Document</title>
 </head>
 <body>
-    <section id="topSection">
+    <section id="topofpage">
         <div class="score">
             <h1 id='score' class="lead text-center text-success bg-danger font-italic">Score: </h1>
         </div>
+    </section>
+    <section id="topSection">
         <div class="cards" id="aiCards">
-
         </div>
         <div class="cards consumedCards" id="aiConsumedCards">
-            <!--Image of back cards will be inserted dynamically by Javascript-->
         </div>
     </section>
     <section id="middleSection">
@@ -24,35 +24,33 @@
         </div>
         <div class="cards" id="mainDiv">
             <div class="cards playable" id="discardStack">
-                <!-- Image tags will be inserted dynamically by Javascript-->
+<!-- Image tags will be inserted dynamically by Javascript-->
             </div>
             <div>
                 <button id="keepButton" class="btn btn-success">Keep</button>
                 <button id="layButton" class="btn btn-danger">Lay</button>
             </div>
         </div>
-        <div>
-            <h1>
-                Text
-            </h1>
-        </div>
     </section>
     <section id="bottomSection">
         <div id="winner-message" style="display: none;">
             <h2 id="winner-name"></h2>
-        </div>
-        <div>
-            <button id="Quit" class="btn btn-success">Quit</button>
-            <button id="Restart" class="btn btn-danger">Restart</button>
         </div>
         <div class="cards playable" id="userCards">
 
             <!-- Image tags will be inserted dynamically by Javascript-->
         </div>
         <div class="cards consumedCards" id="userConsumedCards">
-            <!--Image of back cards will be inserted dynamically by Javascript-->
+<!--Image of back cards will be inserted dynamically by Javascript-->
         </div>
     </section>
+    <section id="endofpage">
+        <div>
+            <button id="Quit" class="btn btn-success">Quit</button>
+            <button id="Restart" class="btn btn-danger">Restart</button>
+        </div>
+    </section>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

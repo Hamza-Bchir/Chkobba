@@ -263,7 +263,7 @@ isPlayerShooter = () => {
 
 
 layButton = () => {
-    const layButton = document.getElementById('layButton');
+    const layButton = document.getElementById('layButton');  // Corrected the ID
     layButton.addEventListener('click', handleLayEvent);
 }
 function handleLayEvent() {
