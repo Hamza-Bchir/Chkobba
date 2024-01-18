@@ -70,7 +70,7 @@ playGame = async () => {
 playerPlay = async () => {
     console.log("isButtonClicked :" + isButtonClicked + '  isPlayerTurn :' + isPlayerTurn)
     if (isPlayerTurn) {
-        await waitForButtonClick(); // Tout se joue sur la variable isButtonClicked qui doit etre true dans les bonnes conditions
+        await waitForButtonClick();
     }
     else {
         let matchingValues = getMatchingValues();
