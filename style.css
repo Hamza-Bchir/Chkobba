@@ -23,7 +23,7 @@ img {
     margin: 1px;
 }
 button {
-    width: 60px;
+    width: 70px;
     height: 50px;
     font-size: 15px;
 }
@@ -34,11 +34,13 @@ button {
     max-width: 1200px; 
     margin: 0 auto;
 }
-body > div {
-    position: fixed;
-    width: 100%;
-    left: 45%;
-    bottom: 20px;
+#middleSection{
+    display:flex;
+    align-items: center;
+    justify-content: space-between;
+}
+#bottomSection{
+    justify-content: space-between;
 }
 .score {
     position: fixed;
