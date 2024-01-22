@@ -27,8 +27,7 @@ button {
     height: 50px;
     font-size: 15px;
 }
-.consumedCards{   
-}
+
 #topSection, #middleSection, #bottomSection{
     width: 100%;
     max-width: 1200px; 

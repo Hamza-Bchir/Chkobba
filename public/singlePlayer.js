@@ -639,11 +639,11 @@ function displayWinner(){
     if (playerScore > aiScore) {
         let winnerName = 'ربحت يا وحش';
         winnerNameElement.textContent = winnerName;
-        winnerNameImageElement1.src='images/mdc.png';
+        winnerNameImageElement1.src='./public/images/mdc.png';
     } else {
         let winnerName = 'للأسف خسرت';
         winnerNameElement.textContent = winnerName;
-        winnerNameImageElement1.src='images/rvc.png'
+        winnerNameImageElement1.src='./public/images/rvc.png'
     }
     winnerMessageElement.style.display = "block";
 }
