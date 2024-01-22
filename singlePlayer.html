@@ -8,11 +8,6 @@
     <title>Document</title>
 </head>
 <body>
-    <section id="topofpage">
-        <div class="score">
-            <h1 id='score' class="lead text-center text-success bg-danger font-italic">Score: </h1>
-        </div>
-    </section>
     <section id="topSection">
         <div class="cards" id="aiCards">
         </div>
@@ -27,13 +22,14 @@
 <!-- Image tags will be inserted dynamically by Javascript-->
             </div>
             <div>
-                <button id="keepButton" class="btn btn-success">Keep</button>
-                <button id="layButton" class="btn btn-danger">Lay</button>
+                <button id="keepButton" class="btn btn-danger">Keep</button>
+                <button id="layButton" class="btn btn-success">Lay</button>
             </div>
         </div>
     </section>
     <section id="bottomSection">
         <div id="winner-message" style="display: none;">
+            <img id='winner-name1' class="centered-image" src="" style="width: 300px; height: 200px;">
             <h2 id="winner-name"></h2>
         </div>
         <div class="cards playable" id="userCards">
@@ -44,7 +40,10 @@
 <!--Image of back cards will be inserted dynamically by Javascript-->
         </div>
     </section>
-    <section id="endofpage">
+    <section id="other">
+        <div class="score">
+            <h4 id="score">Score: </h4>
+        </div>
         <div>
             <button id="Quit" class="btn btn-success">Quit</button>
             <button id="Restart" class="btn btn-danger">Restart</button>

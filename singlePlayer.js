@@ -4,7 +4,7 @@ let isPlayerTurn = true;
 let isPlayerLastAte = false;
 
 // Track of the score
-let playerScore = 0;
+let playerScore = 10;
 let aiScore = 0;
 
 let playerChkobbaCount = 0;
@@ -63,6 +63,7 @@ playGame = async () => {
         displayScore(); //ToDo
         console.log(aiScore, playerScore);
     }
+    console.log('wahch')
     displayWinner(); //ToDo
     displayButtons(); //ToDo
 }
@@ -630,23 +631,22 @@ searchIndexDineri = (matchingArray) => {
     return null;
 }
 
-function displayWinner() {
-
+function displayWinner(){
     var winnerMessageElement = document.getElementById("winner-message");
     var winnerNameElement = document.getElementById("winner-name");
+    var winnerNameImageElement1 = document.getElementById('winner-name1');
 
-    if(playerScore>aiScore){
+    if (playerScore > aiScore) {
         let winnerName = 'ربحت يا وحش';
         winnerNameElement.textContent = winnerName;
-    }
-    else{
-        let winnerName =  'للأسف خسرت';
+        winnerNameImageElement1.src='images/mdc.png';
+    } else {
+        let winnerName = 'للأسف خسرت';
         winnerNameElement.textContent = winnerName;
-
+        winnerNameImageElement1.src='images/rvc.png'
     }
     winnerMessageElement.style.display = "block";
 }
-
 
 displayScore =() =>{
     scoreTitleElement= document.getElementById('score');
