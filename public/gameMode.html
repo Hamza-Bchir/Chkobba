@@ -21,13 +21,13 @@
         const array = Array.from(entries);
         console.log(array);
         if(array[0][1].includes('false')){
-            url='http://127.0.0.1:5500/public/singlePlayer.html?'
+            url='http://localhost:5500/singlePlayer.html?'
         }
         else if(array[0][1].includes('true')){
-            url='http://127.0.0.1:5500/public/multiPlayer.html?'
+            url='http://localhost:5500/multiPlayer.html?'
         }
         else{
-            url='http://127.0.0.1:5500/Doesnotexist.html'
+            url='http://localhost:5500/Doesnotexist.html'
         }
 
         const classicBtn = document.getElementById('classicBtn');

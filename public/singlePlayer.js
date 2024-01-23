@@ -60,12 +60,10 @@ playGame = async () => {
         updateScore();
         createDeck();
         shuffleDeck();
-        displayScore(); //ToDo
+        displayScore();
         console.log(aiScore, playerScore);
     }
-    console.log('wahch')
-    displayWinner(); //ToDo
-    displayButtons(); //ToDo
+    displayWinner();
 }
 
 playerPlay = async () => {
@@ -639,11 +637,11 @@ function displayWinner(){
     if (playerScore > aiScore) {
         let winnerName = 'ربحت يا وحش';
         winnerNameElement.textContent = winnerName;
-        winnerNameImageElement1.src='./public/images/mdc.png';
+        winnerNameImageElement1.src='./images/mdc.png';
     } else {
         let winnerName = 'للأسف خسرت';
         winnerNameElement.textContent = winnerName;
-        winnerNameImageElement1.src='./public/images/rvc.png'
+        winnerNameImageElement1.src='./images/rvc.png'
     }
     winnerMessageElement.style.display = "block";
 }
