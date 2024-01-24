@@ -538,7 +538,7 @@ getGameModeValue = () => {
     let url = window.location.search;
     let searchParams = new URLSearchParams(url);
     const modeParam = searchParams.get('gamemode');
-    gameModeValue = modeParam.includes('classic') ? 21 : 11
+    gameModeValue = modeParam.includes('classic') ? 21 : 11;
 }
 
 getMatchingValues = () => {
