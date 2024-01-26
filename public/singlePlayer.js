@@ -43,10 +43,10 @@ playGame = async () => {
         await shooterPlay();
         disableKeepButton();
         trayDeal();
-        aiConsumedCards=[];
-        playerConsumedCards=[];
-        aiChkobbaCount=0;
-        playerChkobbaCount=0;
+        aiConsumedCards = [];
+        playerConsumedCards = [];
+        aiChkobbaCount = 0;
+        playerChkobbaCount = 0;
         while (deck.length) {
             playersDeal();
             while (aiHand.length || playerHand.length) {

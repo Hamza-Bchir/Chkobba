@@ -1,0 +1,235 @@
+  engine intercepting request for path "/socket.io/" +14ms
+PS C:\Users\bchir\Desktop\Chkobba> $env:DEBUG="engine*"; node .\server\server.js
+Server is listening on port 5500
+  engine intercepting request for path "/socket.io/" +0ms
+  engine handling "GET" http request "/socket.io/?EIO=4&transport=polling&t=Or5kitt" +1ms
+  engine no middleware to apply, skipping +2ms
+  engine handshaking client "HX8P5r47NTKfrX3RAAAA" +2ms
+  engine:socket readyState updated from opening to open +0ms
+  engine:socket sending packet "open" ({"sid":"HX8P5r47NTKfrX3RAAAA","upgrades":["websocket"],"pingInterval":25000,"pingTimeout":20000,"maxPayload":1000000}) +0ms
+  engine:polling setting request +0ms
+  engine:socket flushing buffer to transport +1ms
+  engine:polling writing "0{"sid":"HX8P5r47NTKfrX3RAAAA","upgrades":["websocket"],"pingInterval":25000,"pingTimeout":20000,"maxPayload":1000000}" +1ms
+  engine:socket executing batch send callback +3ms
+  engine intercepting request for path "/socket.io/" +16ms
+  engine handling "POST" http request "/socket.io/?EIO=4&transport=polling&t=Or5kiu9&sid=HX8P5r47NTKfrX3RAAAA" +0ms
+  engine no middleware to apply, skipping +1ms
+  engine setting new request for existing client +1ms
+  engine:polling received "40" +16ms
+  engine:socket received packet message +15ms
+  engine:socket sending packet "message" (0{"sid":"mtO1f2Of_nPvbvYTAAAB"}) +4ms
+New connection ... ID:mtO1f2Of_nPvbvYTAAAB
+  engine intercepting request for path "/socket.io/" +8ms
+  engine handling "GET" http request "/socket.io/?EIO=4&transport=polling&t=Or5kiuB&sid=HX8P5r47NTKfrX3RAAAA" +1ms
+  engine no middleware to apply, skipping +0ms
+  engine setting new request for existing client +0ms
+  engine:polling setting request +9ms
+  engine:socket flushing buffer to transport +4ms
+  engine:polling writing "40{"sid":"mtO1f2Of_nPvbvYTAAAB"}" +0ms
+  engine:socket executing batch send callback +1ms
+  engine no middleware to apply, skipping +4ms
+  engine writing headers: {} +3ms
+  engine upgrading existing transport +4ms
+  engine:socket might upgrade socket transport from "polling" to "websocket" +10ms
+  engine:ws received "2probe" +0ms
+  engine:socket got probe ping packet, sending pong +5ms
+  engine:ws writing "3probe" +2ms
+  engine intercepting request for path "/socket.io/" +9ms
+  engine handling "GET" http request "/socket.io/?EIO=4&transport=polling&t=Or5kiud&sid=HX8P5r47NTKfrX3RAAAA" +0ms
+  engine no middleware to apply, skipping +1ms
+  engine setting new request for existing client +0ms
+  engine:polling setting request +20ms
+  engine:socket writing a noop packet to polling for fast upgrade +115ms
+  engine:polling writing "6" +112ms
+  engine:ws received "5" +119ms
+  engine:socket got upgrade packet - upgrading +6ms
+  engine:transport readyState updated from open to closing (polling) +0ms
+  engine:polling closing +7ms
+  engine:polling transport discarded - closing right away +1ms     
+  engine:transport readyState updated from closing to closed (polling) +2ms
+  engine intercepting request for path "/socket.io/" +2s
+  engine handling "GET" http request "/socket.io/?EIO=4&transport=polling&t=Or5kjNO" +0ms
+  engine no middleware to apply, skipping +1ms
+  engine handshaking client "e56qo0Ql7EfLMkNjAAAC" +0ms
+  engine:socket readyState updated from opening to open +2s        
+  engine:socket sending packet "open" ({"sid":"e56qo0Ql7EfLMkNjAAAC","upgrades":["websocket"],"pingInterval":25000,"pingTimeout":20000,"maxPayload":1000000}) +0ms
+  engine:polling setting request +2s
+  engine:socket flushing buffer to transport +1ms
+  engine:polling writing "0{"sid":"e56qo0Ql7EfLMkNjAAAC","upgrades":["websocket"],"pingInterval":25000,"pingTimeout":20000,"maxPayload":1000000}" +0ms
+  engine:socket executing batch send callback +1ms
+  engine intercepting request for path "/socket.io/" +10ms
+  engine handling "POST" http request "/socket.io/?EIO=4&transport=polling&t=Or5kjNZ&sid=e56qo0Ql7EfLMkNjAAAC" +0ms
+  engine no middleware to apply, skipping +0ms
+  engine setting new request for existing client +0ms
+  engine:polling received "40" +9ms
+  engine:socket received packet message +8ms
+  engine:socket sending packet "message" (0{"sid":"w-ijqsP0QMDIEOwDAAAD"}) +1ms
+New connection ... ID:w-ijqsP0QMDIEOwDAAAD
+  engine:socket sending packet "message" (2["getGameModeValue"]) +2ms
+  engine:socket flushing buffer to transport +0ms
+  engine:socket sending packet "message" (2["shooter",false]) +1ms 
+  engine:socket sending packet "message" (2["shooter",true]) +0ms  
+  engine:socket sending packet "message" (2["deck",["K-S","6-H","2-H","2-C","6-C","6-D","5-H","2-D","3-S","K-D","4-S","5-S","Q-S","Q-D","5-C","Q-H","K-H","A-S","J-C","4-C","7-S","4-D","A-C","7-C","7-H","6-S","2-S","Q-C","J-D","4-H","K-C","J-S","3-C","A-H","3-D","A-D","5-D","J-H","7-D","3-H"]]) +1ms
+  engine:socket sending packet "message" (2["deck",["K-S","6-H","2-H","2-C","6-C","6-D","5-H","2-D","3-S","K-D","4-S","5-S","Q-S","Q-D","5-C","Q-H","K-H","A-S","J-C","4-C","7-S","4-D","A-C","7-C","7-H","6-S","2-S","Q-C","J-D","4-H","K-C","J-S","3-C","A-H","3-D","A-D","5-D","J-H","7-D","3-H"]]) +0ms
+  engine:socket sending packet "message" (2["startGame"]) +1ms
+  engine:socket sending packet "message" (2["startGame"]) +0ms     
+  engine:socket flushing buffer to transport +1ms
+  engine intercepting request for path "/socket.io/" +8ms
+  engine handling "GET" http request "/socket.io/?EIO=4&transport=polling&t=Or5kjNa&sid=e56qo0Ql7EfLMkNjAAAC" +1ms
+  engine no middleware to apply, skipping +0ms
+  engine setting new request for existing client +0ms
+  engine:polling setting request +8ms
+  engine:socket flushing buffer to transport +2ms
+  engine:polling writing "40{"sid":"w-ijqsP0QMDIEOwDAAAD"}▲42["shooter",true]▲42["deck",["K-S","6-H","2-H","2-C","6-C","6-D","5-H","2-D","3-S","K-D","4-S","5-S","Q-S","Q-D","5-C","Q-H","K-H","A-S","J-C","4-C","7-S","4-D","A-C","7-C","7-H","  engine:socket received p  engine:socket received packet message +8ms
+  engine setting new request for existing client +0ms
+  engine:polling setting request +21ms
+  engine setting new request for existing client +0ms
+  engine:polling setting request +21ms
+  engine setting new request for existing client +0ms
+  engine:polling setting request +21ms
+  engine setting new request for existing client +0ms
+  engine:polling setting request +21ms
+  engine setting new request for existing client +0ms
+  engine:polling setting request +21ms
+  engine setting new request for existing client +0ms
+  engine:polling setting request +21ms
+  engine:ws received "2probe" +21ms
+  engine:socket got probe ping packet, sending pong +21ms
+  engine:ws writing "3probe" +1ms
+  engine:socket writing a noop packet to polling for fast upgrade +100ms
+  engine:polling writing "6" +114ms
+  engine:ws received "5" +109ms
+  engine:socket got upgrade packet - upgrading +9ms
+  engine:transport readyState updated from open to closing (polling) +2s
+  engine:polling closing +10ms
+  engine:polling transport discarded - closing right away +0ms
+  engine:transport readyState updated from closing to closed (polling) +1ms
+  engine:ws received "420["move",[],[],["7-D","J-H","5-D","A-D","3-H"]]" +980ms
+  engine:socket received packet message +981ms
+this socket w-ijqsP0QMDIEOwDAAAD
+something was received here
+  engine:socket sending packet "message" (30[]) +2ms
+  engine:socket flushing buffer to transport +1ms
+  engine:ws writing "430[]" +4ms
+  engine:socket sending packet "message" (2["move",[],[],["7-D","J-H","5-D","A-D","3-H"]]) +1ms
+  engine:socket flushing buffer to transport +0ms
+  engine:socket sending packet "message" (2["move",[],[],["7-D","J-H","5-D","A-D","3-H"]]) +1ms
+  engine:socket flushing buffer to transport +0ms
+
+
+
+
+
+  ///// Problem
+
+
+   send pipe "C:\Users\bchir\Desktop\Chkobba\public\images\cards\BACK.png" +3ms
+  send accept ranges +2ms
+  send cache-control public, max-age=0 +1ms
+  send modified Mon, 22 Jan 2024 18:16:47 GMT +1ms
+  send etag W/"c6d2c-18d3263a37f" +0ms
+  send content-type image/png +0ms
+  send not modified +1ms
+  express:router dispatching GET /images/cards/6-H.png +17ms
+  express:router query  : /images/cards/6-H.png +1ms
+  express:router expressInit  : /images/cards/6-H.png +0ms
+  express:router serveStatic  : /images/cards/6-H.png +0ms
+  send stat "C:\Users\bchir\Desktop\Chkobba\public\images\cards\6-H.png" +3ms
+  express:router dispatching GET /images/cards/K-S.png +3ms
+  express:router query  : /images/cards/K-S.png +0ms
+  express:router expressInit  : /images/cards/K-S.png +0ms
+  express:router serveStatic  : /images/cards/K-S.png +1ms
+  send stat "C:\Users\bchir\Desktop\Chkobba\public\images\cards\K-S.png" +2ms
+  express:router dispatching GET /images/cards/J-D.png +1ms
+  express:router query  : /images/cards/J-D.png +0ms
+  express:router expressInit  : /images/cards/J-D.png +0ms
+  express:router serveStatic  : /images/cards/J-D.png +0ms
+  send stat "C:\Users\bchir\Desktop\Chkobba\public\images\cards\J-D.png" +1ms
+  send pipe "C:\Users\bchir\Desktop\Chkobba\public\images\cards\6-H.png" +1ms
+  send accept ranges +0ms
+  send cache-control public, max-age=0 +0ms
+  send modified Mon, 22 Jan 2024 18:16:47 GMT +0ms
+  send etag W/"82b1-18d3263a370" +0ms
+  send content-type image/png +1ms
+  send not modified +0ms
+  send pipe "C:\Users\bchir\Desktop\Chkobba\public\images\cards\K-S.png" +2ms
+  send accept ranges +0ms
+  send cache-control public, max-age=0 +1ms
+  send modified Mon, 22 Jan 2024 18:16:47 GMT +0ms
+  send etag W/"31348-18d3263a38f" +0ms
+  send content-type image/png +1ms
+  send not modified +0ms
+  express:router dispatching GET /images/cards/J-H.png +7ms
+  express:router query  : /images/cards/J-H.png +0ms
+  express:router expressInit  : /images/cards/J-H.png +0ms
+  express:router serveStatic  : /images/cards/J-H.png +0ms
+  send stat "C:\Users\bchir\Desktop\Chkobba\public\images\cards\J-H.png" +1ms
+  send pipe "C:\Users\bchir\Desktop\Chkobba\public\images\cards\J-D.png" +0ms
+  send accept ranges +1ms
+  send cache-control public, max-age=0 +0ms
+  send modified Mon, 22 Jan 2024 18:16:47 GMT +0ms
+  send etag W/"349ba-18d3263a37f" +0ms
+  send content-type image/png +0ms
+  send not modified +0ms
+  send pipe "C:\Users\bchir\Desktop\Chkobba\public\images\cards\J-H.png" +1ms
+  send accept ranges +0ms
+  send cache-control public, max-age=0 +1ms
+  send modified Mon, 22 Jan 2024 18:16:47 GMT +0ms
+  send etag W/"3fa75-18d3263a37f" +0ms
+  send content-type image/png +1ms
+  send not modified +0ms
+  express:router dispatching GET /images/cards/6-H.png +6ms
+  express:router query  : /images/cards/6-H.png +2ms
+  express:router expressInit  : /images/cards/6-H.png +0ms
+  express:router serveStatic  : /images/cards/6-H.png +1ms
+  send stat "C:\Users\bchir\Desktop\Chkobba\public\images\cards\6-H.png" +6ms
+  send pipe "C:\Users\bchir\Desktop\Chkobba\public\images\cards\6-H.png" +0ms
+  send accept ranges +0ms
+  send cache-control public, max-age=0 +0ms
+  send modified Mon, 22 Jan 2024 18:16:47 GMT +1ms
+  send etag W/"82b1-18d3263a370" +0ms
+  send content-type image/png +0ms
+  send not modified +0ms
+  engine:socket writing a noop packet to polling for fast upgrade +107ms
+  engine:polling writing "6" +103ms
+  engine:ws received "5" +110ms
+  engine:socket got upgrade packet - upgrading +3ms
+  engine:transport readyState updated from open to closing (polling) +1s
+  engine:polling closing +3ms
+  engine:polling transport discarded - closing right away +0ms
+  engine:transport readyState updated from closing to closed (polling) +0ms
+  engine:ws received "420["move",[],[],["K-S","J-D","J-H","6-H","A-H"]]" +1s
+  engine:socket received packet message +1s
+  socket.io-parser decoded 20["move",[],[],["K-S","J-D","J-H","6-H","A-H"]] as {"type":2,"nsp":"/","id":0,"data":["move",[],[],["K-S","J-D","J-H","6-H","A-H"]]} +2s
+  socket.io:socket got packet {"type":2,"nsp":"/","id":0,"data":["move",[],[],["K-S","J-D","J-H","6-H","A-H"]]} +2s
+  socket.io:socket emitting event ["move",[],[],["K-S","J-D","J-H","6-H","A-H"]] +1ms     
+  socket.io:socket attaching ack callback to event +0ms
+  socket.io:socket dispatching an event ["move",[],[],["K-S","J-D","J-H","6-H","A-H"],null] +1ms
+this socket yQkHajkHMXOTVck7AAAD
+something was received here
+  socket.io:socket sending ack [] +1ms
+  socket.io-parser encoding packet {"id":0,"type":3,"data":[],"nsp":"/"} +4ms
+  socket.io-parser encoded {"id":0,"type":3,"data":[],"nsp":"/"} as 30[] +0ms
+  engine:socket sending packet "message" (30[]) +5ms
+  engine:socket flushing buffer to transport +1ms
+  engine:ws writing "430[]" +6ms
+  socket.io-parser encoding packet {"type":2,"data":["move",[],[],["K-S","J-D","J-H","6-H","A-H"]],"nsp":"/"} +2ms
+  socket.io-parser encoded {"type":2,"data":["move",[],[],["K-S","J-D","J-H","6-H","A-H"]],"nsp":"/"} as 2["move",[],[],["K-S","J-D","J-H","6-H","A-H"]] +0ms
+  engine:socket sending packet "message" (2["move",[],[],["K-S","J-D","J-H","6-H","A-H"]])
+ +2ms
+  engine:socket flushing buffer to transport +0ms
+  engine:socket sending packet "message" (2["move",[],[],["K-S","J-D","J-H","6-H","A-H"]])
+ +1ms
+  engine:socket flushing buffer to transport +0ms
+  express:router dispatching GET /images/cards/A-H.png +2s
+  express:router query  : /images/cards/A-H.png +0ms
+  express:router expressInit  : /images/cards/A-H.png +1ms
+  express:router serveStatic  : /images/cards/A-H.png +0ms
+  send stat "C:\Users\bchir\Desktop\Chkobba\public\images\cards\A-H.png" +2s
+  send pipe "C:\Users\bchir\Desktop\Chkobba\public\images\cards\A-H.png" +1ms
+  send accept ranges +0ms
+  send cache-control public, max-age=0 +0ms
+  send modified Mon, 22 Jan 2024 18:16:47 GMT +0ms
+  send etag W/"ac68-18d3263a37f" +1ms
+  send content-type image/png +0ms
+  send not modified +0ms

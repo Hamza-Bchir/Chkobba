@@ -12,10 +12,9 @@ app.use(express.static('./public'));
 var users = [];
 
 var deck = [];
-var gameModeValue=11; //Default value
 
 
-io.on('connection',async (socket)=>{
+io.on('connection', (socket)=>{
 
     console.log('New connection ... ID:'+socket.id);
     users.push(socket.id);
@@ -23,29 +22,32 @@ io.on('connection',async (socket)=>{
     socket.on('disconnect',()=>{
         console.log(`User : ${socket.id} disconnected`);
         users=users.filter((element)=>element == socket.id);
-        socket.emit('gameOver',()=>{
-        });
+        //socket.emit('gameOver',()=>{
+        //});
 
     })
     
-    if (users.length > 1) {
+    if (users.length > 1) { // Problem may be with users.length and how it is implemented
 
         io.to(users[0]).emit('getGameModeValue');
         playerShooter();
         createDeck();
-        shuffleDeck();
+        shuffleDeck(); // GameModeValue is received from user[0] but never send to user[1];
         io.emit('deck',deck);
-        
-        io.emit('startGame');
-        io.on('shooterPlayed',()=>{
-            io.emit('shooterDone');
-        })
     }
 
     socket.on('GameModeValue', (value) => {
-        gameModeValue = value;
-        console.log(gameModeValue);
+        io.emit('startGame',value);
     });
+
+    socket.on('move',(playerHand, aiHand, tray,callback)=>{
+        console.log(`this socket ${socket.id}`);
+        console.log('something was received here');
+        callback();
+        io.emit('move',playerHand, aiHand, tray,(acknowledgmentData)=>{
+            console.log('Emission to all clients acknowledged with data:'+acknowledgmentData);
+        });
+    })
 });
 
 
@@ -60,7 +62,6 @@ server.listen(5500,()=>{
 
 const playerShooter =()=>{
     let shooter = Math.floor(Math.random()*2)=== 1 ? true : false;
-    console.log(shooter);
     io.to(users[0]).emit('shooter',shooter);
     io.to(users[1]).emit('shooter',!shooter);
 }

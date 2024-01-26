@@ -1,0 +1,196 @@
+  engine:ws writing "3probe" +1ms
+PS C:\Users\bchir\Desktop\Chkobba> $env:DEBUG="engine*"; node .\server\server.js
+Server is listening on port 5500
+  engine intercepting request for path "/socket.io/" +0ms
+  engine handling "GET" http request "/socket.io/?EIO=4&transport=polling&t=Or5hIY9" +0ms
+  engine no middleware to apply, skipping +2ms
+  engine handshaking client "PRW8IYEiq_PZGm1HAAAA" +1ms
+  engine:socket readyState updated from opening to open +0ms
+  engine:socket sending packet "open" ({"sid":"PRW8IYEiq_PZGm1HAAAA","upgrades":["websocket"],"pingInterval":25000,"pingTimeout":20000,"maxPayload":1000000}) +1ms
+  engine:polling setting request +0ms
+  engine:socket flushing buffer to transport +0ms
+  engine:polling writing "0{"sid":"PRW8IYEiq_PZGm1HAAAA","upgrades":["websocket"],"pingInterval":25000,"pingTimeout":20000,"maxPayload":1000000}" +1ms
+  engine:socket executing batch send callback +3ms
+  engine intercepting request for path "/socket.io/" +20ms
+  engine handling "POST" http request "/socket.io/?EIO=4&transport=polling&t=Or5hIYa&sid=PRW8IYEiq_PZGm1HAAAA" +2ms
+  engine no middleware to apply, skipping +1ms
+  engine setting new request for existing client +0ms
+  engine:polling received "40" +22ms
+  engine:socket received packet message +20ms
+  engine:socket sending packet "message" (0{"sid":"63u8crNaT-wqRhUYAAAB"}) +4ms
+New connection ... ID:63u8crNaT-wqRhUYAAAB
+  engine intercepting request for path "/socket.io/" +8ms
+  engine handling "GET" http request "/socket.io/?EIO=4&transport=polling&t=Or5hIYd&sid=PRW8IYEiq_PZGm1HAAAA" +0ms
+  engine no middleware to apply, skipping +0ms
+  engine setting new request for existing client +0ms
+  engine:polling setting request +6ms
+  engine:socket flushing buffer to transport +2ms
+  engine:polling writing "40{"sid":"63u8crNaT-wqRhUYAAAB"}" +0ms
+  engine:socket executing batch send callback +1ms
+  engine no middleware to apply, skipping +2ms
+  engine writing headers: {} +2ms
+  engine upgrading existing transport +0ms
+  engine:socket might upgrade socket transport from "polling" to "websocket" +4ms
+  engine:ws received "2probe" +0ms
+  engine:socket got probe ping packet, sending pong +4ms
+  engine:ws writing "3probe" +1ms
+  engine intercepting request for path "/socket.io/" +8ms
+  engine handling "GET" http request "/socket.io/?EIO=4&transport=polling&t=Or5hIYt&sid=PRW8IYEiq_PZGm1HAAAA" +0ms
+  engine no middleware to apply, skipping +0ms
+  engine setting new request for existing client +1ms
+  engine:polling setting request +13ms
+  engine:socket writing a noop packet to polling for fast upgrade +112ms
+  engine:polling writing "6" +108ms
+  engine:ws received "5" +117ms
+  engine:socket got upgrade packet - upgrading +7ms
+  engine:transport readyState updated from open to closing (polling) +0ms
+  engine:polling closing +9ms
+  engine:polling transport discarded - closing right away +0ms
+  engine:transport readyState updated from closing to closed (polling) +2ms
+  engine intercepting request for path "/socket.io/" +2s
+  engine handling "GET" http request "/socket.io/?EIO=4&transport=polling&t=Or5hJ8f" +1ms
+  engine no middleware to apply, skipping +0ms
+  engine handshaking client "ZyTjHqJWfU4SJVI-AAAC" +1ms
+  engine:socket readyState updated from opening to open +2s
+  engine:socket sending packet "open" ({"sid":"ZyTjHqJWfU4SJVI-AAAC","upgrades":["websocket"],"pingInterval":25000,"pingTimeout":20000,"maxPayload":1000000}) +1ms
+  engine:polling setting request +2s
+  engine:socket flushing buffer to transport +0ms
+  engine:polling writing "0{"sid":"ZyTjHqJWfU4SJVI-AAAC","upgrades":["websocket"],"pingInterval":25000,"pingTimeout":20000,"maxPayload":1000000}" +1ms
+  engine:socket executing batch send callback +2ms
+  engine intercepting request for path "/socket.io/" +23ms
+  engine handling "POST" http request "/socket.io/?EIO=4&transport=polling&t=Or5hJ97&sid=ZyTjHqJWfU4SJVI-AAAC" +0ms
+  engine no middleware to apply, skipping +1ms
+  engine setting new request for existing client +0ms
+  engine:polling received "40" +24ms
+  engine:socket received packet message +23ms
+  engine:socket sending packet "message" (0{"sid":"VLAh3CxWzg8N41M8AAAD"}) +2ms
+New connection ... ID:VLAh3CxWzg8N41M8AAAD
+  engine:socket sending packet "message" (2["getGameModeValue"]) +2ms
+  engine:socket flushing buffer to transport +1ms
+  engine:socket sending packet "message" (2["shooter",true]) +1ms
+  engine:socket sending packet "message" (2["shooter",false]) +1ms
+  engine:socket sending packet "message" (2["deck",["3-H","5-D","K-S","2-H","4-H","6-D","J-H","J-S","Q-H","7-C","4-D","A-D","2-D","7-H","K-C","Q-S","A-C","2-C","6-C","7-S","A-S","5-H","Q-D","6-S","J-C","4-C","7-D","3-S","6-H","5-S","Q-C","K-D","A-H","K-H","3-D","2-S","5-C","3-C","J-D","4-S"]]) +2ms
+  engine:socket sending packet "message" (2["deck",["3-H","5-D","K-S","2-H","4-H","6-D","J-H","J-S","Q-H","7-C","4-D","A-D","2-D","7-H","K-C","Q-S","A-C","2-C","6-C","7-S","A-S","5-H","Q-D","6-S","J-C","4-C","7-D","3-S","6-H","5-S","Q-C","K-D","A-H","K-H","3-D","2-S","5-C","3-C","J-D","4-S"]]) +1ms
+  engine:socket sending packet "message" (2["startGame"]) +1ms
+  engine:socket sending packet "message" (2["startGame"]) +0ms
+  engine:socket flushing buffer to transport +1ms
+  engine intercepting request for path "/socket.io/" +15ms
+  engine handling "GET" http request "/socket.io/?EIO=4&transport=polling&t=Or5hJ9A&sid=ZyTjHqJWfU4SJVI-AAAC" +0ms
+  engine no middleware to apply, skipping +0ms
+  engine setting new request for existing client +0ms
+  engine:polling setting request +13ms
+  engine:socket flushing buffer to transport +2ms
+  engine:polling writing "40{"sid":"VLAh3CxWzg8N41M8AAAD"}▲42["shooter",false]▲42["deck",["3-H","5-D","K-S","2-H","4-H","6-D","J-H","J-S","Q-H","7-C","4-D","A-D","2-D","7-H","K-C","Q-S","A-C","2-C","6-C","7-S","A-S","5-H","Q-D","6-S","J-C","4-C","7-D","3-S","6-H","5-S","Q-C","K-D","A-H","K-H","3-D","2-S","5-C","3-C","J-D","4-S"]]▲42["startGame"]" +1ms
+  engine:socket executing batch send callback +1ms
+  engine no middleware to apply, skipping +4ms
+  engine writing headers: {} +0ms
+  engine upgrading existing transport +2ms
+  engine:socket might upgrade socket transport from "polling" to "websocket" +4ms
+  engine:ws received "42["GameModeValue",11,null]" +2s
+  engine:socket received packet message +7ms
+  engine intercepting request for path "/socket.io/" +16ms
+  engine handling "GET" http request "/socket.io/?EIO=4&transport=polling&t=Or5hJ9h&sid=ZyTjHqJWfU4SJVI-AAAC" +0ms
+  engine no middleware to apply, skipping +1ms
+  engine setting new request for existing client +0ms
+  engine:polling setting request +23ms
+  engine:ws received "2probe" +27ms
+  engine:socket got probe ping packet, sending pong +27ms
+  engine:ws writing "3probe" +1ms
+  engine:socket writing a noop packet to polling for fast upgrade +113ms
+  engine:polling writing "6" +129ms
+  engine:ws received "5" +116ms
+  engine:socket got upgrade packet - upgrading +4ms
+  engine:transport readyState updated from open to closing (polling) +2s
+  engine:polling closing +5ms
+  engine:polling transport discarded - closing right away +0ms
+  engine:transport readyState updated from closing to closed (polling) +0ms
+  engine:ws received "420["move",[],[],["J-D","3-C","5-C","2-S","4-S"]]" +21s
+  engine:socket received packet message +21s  // The line
+  engine:ws received "421["move",[],null,null]" +1s
+2ms
+  engine:socket sending packet "ping" (undefined) +2ms
+  engine:socket flushing buffer to transport +1ms
+  engine:ws writing "2" +47ms
+  engine:ws received "3" +3ms
+  engine:socket received packet pong +4ms
+  engine:socket got pong +1ms
+  engine:ws received "422["move",[],null,null]" +1s
+  engine:socket received packet message +1s
+  engine:ws received "423["move",[],null,null]" +1s
+  engine:socket received packet message +1s
+  engine:socket writing ping packet - expecting pong within 20000ms +224ms
+  engine:socket sending packet "ping" (undefined) +1ms
+  engine:socket flushing buffer to transport +1ms
+  engine:ws writing "2" +228ms
+  engine:ws received "3" +3ms
+  engine:socket received packet pong +5ms
+  engine:socket got pong +0ms
+  engine:ws received "424["move",[],null,null]" +770ms
+  engine:socket received packet message +770ms
+  engine:ws received "425["move",[],null,null]" +2s
+  engine:socket received packet message +2s
+  engine:ws received "426["move",[],null,null]" +2s
+  engine:socket received packet message +2s
+  engine:ws received "427["move",[],null,null]" +2s
+  engine:socket received packet message +2s
+  engine:ws received "428["move",[],null,null]" +2s
+  engine:socket received packet message +2s
+  engine:ws received "429["move",[],null,null]" +2s
+  engine:socket received packet message +2s
+  engine:ws received "4210["move",[],null,null]" +2s
+  engine:socket received packet message +2s
+  engine:ws received "4211["move",[],null,null]" +2s
+  engine:socket received packet message +2s
+
+
+  First run : Problem
+/////////////////////////////////////////////////////
+  Second run : No Problem
+    
+express:router dispatching GET /images/cards/4-D.png +5ms
+  express:router query  : /images/cards/4-D.png +1ms
+  express:router expressInit  : /images/cards/4-D.png +1ms
+  express:router serveStatic  : /images/cards/4-D.png +0ms
+  send stat "C:\Users\bchir\Desktop\Chkobba\public\images\cards\4-D.png" +4ms
+  express:router dispatching GET /images/cards/3-C.png +4ms
+  express:router query  : /images/cards/3-C.png +1ms
+  express:router expressInit  : /images/cards/3-C.png +1ms
+  express:router serveStatic  : /images/cards/3-C.png +0ms
+  send stat "C:\Users\bchir\Desktop\Chkobba\public\images\cards\3-C.png" +6ms
+  send pipe "C:\Users\bchir\Desktop\Chkobba\public\images\cards\4-D.png" +1ms
+  send accept ranges +0ms
+  send cache-control public, max-age=0 +0ms
+  send modified Mon, 22 Jan 2024 18:16:47 GMT +1ms
+  send etag W/"5e94-18d3263a370" +0ms
+  send content-type image/png +0ms
+  send not modified +0ms
+  send pipe "C:\Users\bchir\Desktop\Chkobba\public\images\cards\3-C.png" +1ms
+  send accept ranges +0ms
+  send cache-control public, max-age=0 +1ms
+  send modified Mon, 22 Jan 2024 18:16:47 GMT +0ms
+  send etag W/"71e9-18d3263a370" +0ms
+  send content-type image/png +0ms
+  send not modified +1ms
+  engine:socket writing a noop packet to polling for fast upgrade +104ms
+  engine:polling writing "6" +105ms
+  engine:ws received "5" +109ms
+  engine:socket got upgrade packet - upgrading +6ms
+  engine:transport readyState updated from open to closing (polling) +2s
+  engine:polling closing +7ms
+  engine:polling transport discarded - closing right away +0ms
+  engine:transport readyState updated from closing to closed (polling) +1ms
+  engine:ws received "420["move",[],[],["7-S","4-D","Q-S","3-C","J-H"]]" +2s
+  engine:socket received packet message +2s
+  socket.io-parser decoded 20["move",[],[],["7-S","4-D","Q-S","3-C","J-H"]] as {"type":2,"nsp":"/","id":0,"data":["move",[],[],["7-S","4-D","Q-S","3-C","J-H"]]} +2s
+  socket.io:socket got packet {"type":2,"nsp":"/","id":0,"data":["move",[],[],["7-S","4-D","Q-S","3-C","J-H"]]} +2s
+  socket.io:socket emitting event ["move",[],[],["7-S","4-D","Q-S","3-C","J-H"]] +0ms
+  socket.io:socket attaching ack callback to event +0ms
+  socket.io:socket dispatching an event ["move",[],[],["7-S","4-D","Q-S","3-C","J-H"],null] +0ms
+  engine:ws received "421["move",[],[],["7-S","4-D","Q-S","3-C","J-H"]]" +2s
+  engine:socket received packet message +2s
+  socket.io-parser decoded 21["move",[],[],["7-S","4-D","Q-S","3-C","J-H"]] as {"type":2,"nsp":"/","id":1,"data":["move",[],[],["7-S","4-D","Q-S","3-C","J-H"]]} +2s
+  socket.io:socket got packet {"type":2,"nsp":"/","id":1,"data":["move",[],[],["7-S","4-D","Q-S","3-C","J-H"]]} +2s
+  socket.io:socket emitting event ["move",[],[],["7-S","4-D","Q-S","3-C","J-H"]] +0ms
+  socket.io:socket attaching ack callback to event +0ms
+  socket.io:socket dispatching an event ["move",[],[],["7-S","4-D","Q-S","3-C","J-H"],null] +0ms
+PS C:\Users\bchir\Desktop\Chkobba> 

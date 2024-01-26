@@ -2,18 +2,20 @@ const socket = io();
 
 var isShooter = false;
 
+var gameModeValue = 11; //Default value
 let deck = [];
 let playerHand = [];
-let tray = [];
+let discardStack = [];
 let aiHand = [];
 let isButtonClicked = false;
-
-/*
-socket.on('startGame',()=>{});
-socket.on('move',(array)=>{});
-socket.on('gameOver',()=>{});
-
-*/
+let isShooterTurn = false; // Keep track of players turn with this variable //  
+let aiConsumedCards = [];
+let playerConsumedCards =  [];
+let aiChkobbaCount = [];
+let playerChkobbaCount = 0;
+let aiScore = 0;
+let playerScore = 0;
+let isSelectionEnabled = false;
 
 
 socket.on('getGameModeValue',()=>{
@@ -23,7 +25,6 @@ socket.on('getGameModeValue',()=>{
 
 
 socket.on('shooter',(value)=>{
-    console.log('Shooter event received');
     isShooter= value;
     console.log(isShooter)
 });
@@ -35,26 +36,69 @@ socket.on('deck',(deckArray)=>{
 });
 
 
-socket.on('startGame',()=>{
+socket.on('startGame',(value)=>{
+    gameModeValue = value;
+    console.log(gameModeValue);
     playGame();
 })
 
 socket.on('gameOver',()=>{
 })
 
-function playGame(){
-        shooterPlay();
+async function playGame(){
+        layButton();
+        while(aiScore < gameModeValue && playerScore < gameModeValue){
+            enableKeepButton();
+            await shooterPlay();
+            disableKeepButton();
+            trayDeal();
+            aiConsumedCards = [];
+            playerConsumedCards = [];
+            aiChkobbaCount = 0;
+            playerChkobbaCount = 0;
+            playersDeal();
+            //while (deck.length){
+                //playersDeal();
+                //while (aiHand.length || playerHand.length){
+                    //await playerPlay();
+              //  }
+            //}
+        }
+
 }
+
+
+
+async function playerPlay(){
+    if(isShooter){
+        console.log('im here');
+        toggleSelection();
+        await waitForButtonClick();
+        //socket.emit('move'); // Finish this line
+        toggleSelection();
+    }
+    else{
+        socket.on('move',aiHandRec,playerHandRec,discardStackRec,()=>{
+            isButtonClicked=true
+            playerHand=aiHandRec;
+            aiHand=playerHandRec;
+            discardStack=discardStackRec;
+            display();
+            console.log('move received');
+        });
+        await waitForButtonClick();
+    }
+    console.log('lena')
+    isShooter = !isShooter;
+}
+
+
 getGameModeValue = () => {
     let url = window.location.search;
     let searchParams = new URLSearchParams(url);
     const modeParam = searchParams.get('gamemode');
     gameModeValue = modeParam.includes('classic') ? 21 : 11;
 }
-
-
-
-
 layButton = () => {
     const layButton = document.getElementById('layButton');  // Corrected the ID
     layButton.addEventListener('click', handleLayEvent);
@@ -134,9 +178,6 @@ function handleLayEvent() {
 
     display();
 }
-
-
-
 display = () => {
     const divPlayer = document.getElementById('userCards');
     const divDiscardStack = document.getElementById('discardStack');
@@ -168,9 +209,6 @@ display = () => {
         divDiscardStack.append(cardImg);
     }
 }
-
-
-
 toggleSelection = () => {
     isSelectionEnabled = !isSelectionEnabled;
     const cards = document.querySelectorAll('.playable img');
@@ -187,27 +225,37 @@ toggleSelection = () => {
         })
     }
 }
-
 shooterPlay = async () => {
     let shootedCard = deck.pop();
     if (isShooter) {
+        enableKeepButton();
         addToPlayerHand(shootedCard);
         display();
         await waitForButtonClick();
-        socket.emit('shooterDone');
+        console.log('before emitting');
+        emit(socket,'move',playerHand,aiHand,discardStack);
+        disableKeepButton();
     }
     else {
-        addToAiHand(deck.pop());
+        addToAiHand(shootedCard);
         display();
-        socket.on('shooterDone',()=>{isButtonClicked=true});
+        let intervalId=setInterval(()=>{
+            socket.on('move',(aiHandRec,playerHandRec,discardStackRec)=>{
+                isButtonClicked=true;
+                aiHand=aiHandRec;
+                discardStack=discardStackRec;
+                playerHand= playerHandRec;
+                clearInterval(intervalId);
+            })
+        },500);
+        console.log('wselt');
         await waitForButtonClick();
-        // Opponent play here 
+        console.log('taadit');
+        display();
     }
+    isShooter = !isShooter;
     toggleSelection();
-    display();
-    console.log("Selection activated");
 }
-
 
 waitForButtonClick = () => {
     return new Promise((resolve) => {
@@ -216,7 +264,6 @@ waitForButtonClick = () => {
                 clearInterval(intervalId);
                 isButtonClicked = false;
                 resolve();
-                socket.emit('shooterPlayed');
             }
         }, 100); // Check every 100 milliseconds
     });
@@ -317,18 +364,38 @@ getTypeFromCard = (card) => {
     let type = data[1];
     return type;
 }
-playersDeal = () => {
-    for (i = 0; i < 3; i++) {
-        if (aiHand.length < 3) {
-            addToAiHand(deck.pop());
+
+playersDeal = () =>{
+
+    if(isShooter){
+        for(i = 0; i<3 ; i++){
+
+            if(playerHand.length < 3){
+                addToPlayerHand(deck.pop());
+            }
+
+            if (aiHand.length < 3) {
+                addToAiHand(deck.pop());
+            }
         }
-        if (playerHand.length < 3) {
-            addToPlayerHand(deck.pop());
+    }
+    else{
+        for (i = 0; i < 3; i++) {
+
+            if (aiHand.length < 3) {
+                addToAiHand(deck.pop());
+            }
+
+            if (playerHand.length < 3) {
+                addToPlayerHand(deck.pop());
+            }
         }
     }
     display();
 }
-trayDeal = () => {
+
+
+function trayDeal(){
     for (i = 0; i < 4; i++) {
         if (discardStack.length < 4) {
             addToDiscardStack(deck.pop());
@@ -360,4 +427,13 @@ disableKeepButton = () => {
 function handleKeepEvent() {
     isButtonClicked = true;
     console.log('Player played');
+}
+
+function emit(socket, event, arg,arg1,arg2){
+    socket.timeout(1000).emit(event,arg,arg1,arg2,(err)=>{
+        if(err){
+            console.log(err);
+            emit(socket,event,arg,arg1,arg2);
+        }
+    });
 }
