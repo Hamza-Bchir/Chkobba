@@ -10,7 +10,7 @@ app.use(express.static('./public'));
 
 
 var users = [];
-
+var isShooter = undefined;
 var deck = [];
 
 
@@ -43,6 +43,7 @@ io.on('connection', (socket)=>{
     socket.on('move',(playerHand, aiHand, tray,callback)=>{
         console.log(`this socket ${socket.id}`);
         console.log('something was received here');
+        console.log(tray);
         callback();
         io.emit('move',playerHand, aiHand, tray,(acknowledgmentData)=>{
             console.log('Emission to all clients acknowledged with data:'+acknowledgmentData);
@@ -64,6 +65,12 @@ const playerShooter =()=>{
     let shooter = Math.floor(Math.random()*2)=== 1 ? true : false;
     io.to(users[0]).emit('shooter',shooter);
     io.to(users[1]).emit('shooter',!shooter);
+    if(shooter){
+        isShooter = users[0];
+    }
+    else{
+        isShooter = users[1];
+    }
 }
 
 const createDeck = () => {

@@ -48,21 +48,21 @@ socket.on('gameOver',()=>{
 async function playGame(){
         layButton();
         while(aiScore < gameModeValue && playerScore < gameModeValue){
-            enableKeepButton();
-            await shooterPlay();
-            disableKeepButton();
-            trayDeal();
             aiConsumedCards = [];
             playerConsumedCards = [];
             aiChkobbaCount = 0;
             playerChkobbaCount = 0;
-            playersDeal();
-            //while (deck.length){
-                //playersDeal();
-                //while (aiHand.length || playerHand.length){
-                    //await playerPlay();
-              //  }
-            //}
+            enableKeepButton();
+            await shooterPlay();
+            console.log(discardStack);
+            disableKeepButton();
+            trayDeal();
+            while (deck.length){
+                playersDeal();
+                while (aiHand.length || playerHand.length){
+                    await playerPlay();
+                }
+            }
         }
 
 }
@@ -72,20 +72,19 @@ async function playGame(){
 async function playerPlay(){
     if(isShooter){
         console.log('im here');
-        toggleSelection();
         await waitForButtonClick();
-        //socket.emit('move'); // Finish this line
-        toggleSelection();
+        emit('move',playerHand,aiHand,discardStack);
     }
     else{
-        socket.on('move',aiHandRec,playerHandRec,discardStackRec,()=>{
+        console.log('and i\'m here');
+        socket.on('move',(aiHandRec,playerHandRec,discardStackRec)=>{
+            console.log(discardStack);
             isButtonClicked=true
             playerHand=aiHandRec;
             aiHand=playerHandRec;
             discardStack=discardStackRec;
-            display();
-            console.log('move received');
         });
+        display();
         await waitForButtonClick();
     }
     console.log('lena')
@@ -105,75 +104,87 @@ layButton = () => {
 }
 function handleLayEvent() {
     const divPlayer = document.getElementById('userCards');
+    const playerCardsSelected = divPlayer.querySelectorAll('.selected');
+    const stackCardsSelected = document.getElementById('discardStack').querySelectorAll('.selected');
+    if(!isShooter){
+        alert('It is not your turn yet !');
+        playerCardsSelected.forEach(card => {
+            card.classList.remove('selected');
+        });
+        stackCardsSelected.forEach(card => {
+            card.classList.remove('selected');
+        });
 
-    if (playerHand.length === 0) {
-        return;
     }
+    else{
 
-    let srcImage = null;
-
-    if (playerHand.length === 1) {
-        const imageElements = divPlayer.querySelectorAll('img');
-        if (imageElements.length > 0) {
-            srcImage = imageElements[0].src;
+        if (playerHand.length === 0) {
+            return;
         }
-        isButtonClicked = true;
-        console.log('Player played');
-    }
 
-    else if (playerHand.length > 1) {
-        const playerCardsSelected = divPlayer.querySelectorAll('.selected');
-        const stackCardsSelected = document.getElementById('discardStack').querySelectorAll('.selected');
-        if (playerCardsSelected.length === 1) {
-            if (stackCardsSelected.length > 0) {
-                let somme = 0;
-                let playerCardValue = 0;
-                for (let i = 0; i < stackCardsSelected.length; i++) {
-                    playerCardValue = getValueFromSrc(stackCardsSelected[i].src);
-                    somme += playerCardValue;
-                }
-                if (somme === getValueFromSrc(playerCardsSelected[0].src)) {
-                    //Consommation peut s'effectuer
-                    srcImage = playerCardsSelected[0].src;
-                    stackCardsSelected.forEach(card => {
-                        removeFromDiscardStack(getCardFromSrc(card.src));
-                        addToPlayerConsumedCards(getCardFromSrc(card.src));
-                    });
-                    removeFromPlayerHand(getCardFromSrc(srcImage));
-                    addToPlayerConsumedCards(getCardFromSrc(srcImage));
-                    srcImage = null;
-                    isButtonClicked = true;
-                    isPlayerLastAte = true;
-                    console.log('Player played');
+        let srcImage = null;
+
+        if (playerHand.length === 1) {
+            const imageElements = divPlayer.querySelectorAll('img');
+            if (imageElements.length > 0) {
+                srcImage = imageElements[0].src;
+            }
+            isButtonClicked = true;
+            console.log('Player played');
+        }
+
+        else if (playerHand.length > 1) {
+            if (playerCardsSelected.length === 1) {
+                if (stackCardsSelected.length > 0) {
+                    let somme = 0;
+                    let playerCardValue = 0;
+                    for (let i = 0; i < stackCardsSelected.length; i++) {
+                        playerCardValue = getValueFromSrc(stackCardsSelected[i].src);
+                        somme += playerCardValue;
+                    }
+                    if (somme === getValueFromSrc(playerCardsSelected[0].src)) {
+                        //Consommation peut s'effectuer
+                        srcImage = playerCardsSelected[0].src;
+                        stackCardsSelected.forEach(card => {
+                            removeFromDiscardStack(getCardFromSrc(card.src));
+                            addToPlayerConsumedCards(getCardFromSrc(card.src));
+                        });
+                        removeFromPlayerHand(getCardFromSrc(srcImage));
+                        addToPlayerConsumedCards(getCardFromSrc(srcImage));
+                        srcImage = null;
+                        isButtonClicked = true;
+                        isPlayerLastAte = true;
+                        console.log('Player played');
+                    }
+                    else {
+                        alert('The sum of cards is not equal');
+                        playerCardsSelected.forEach(card => {
+                            card.classList.remove('selected');
+                        });
+                        stackCardsSelected.forEach(card => {
+                            card.classList.remove('selected');
+                        });
+                    }
                 }
                 else {
-                    alert('The sum of cards is not equal');
-                    playerCardsSelected.forEach(card => {
-                        card.classList.remove('selected');
-                    });
-                    stackCardsSelected.forEach(card => {
-                        card.classList.remove('selected');
-                    });
+                    isButtonClicked = true;
+                    console.log('Player played');
+                    srcImage = playerCardsSelected[0].src;
                 }
+            } else if (playerCardsSelected.length === 0) {
+                alert('You must select at least one card');
+            } else {
+                alert('You must select only one card to lay');
+                playerCardsSelected.forEach(card => {
+                    card.classList.remove('selected');
+                });
             }
-            else {
-                isButtonClicked = true;
-                console.log('Player played');
-                srcImage = playerCardsSelected[0].src;
-            }
-        } else if (playerCardsSelected.length === 0) {
-            alert('You must select at least one card');
-        } else {
-            alert('You must select only one card to lay');
-            playerCardsSelected.forEach(card => {
-                card.classList.remove('selected');
-            });
         }
-    }
 
-    if (srcImage) {
-        addToDiscardStack(getCardFromSrc(srcImage));
-        removeFromPlayerHand(getCardFromSrc(srcImage));
+        if (srcImage) {
+            addToDiscardStack(getCardFromSrc(srcImage));
+            removeFromPlayerHand(getCardFromSrc(srcImage));
+        }
     }
 
     display();
@@ -191,7 +202,7 @@ display = () => {
         let cardImg = document.createElement('img');
         cardImg.src = './images/cards/' + playerHand[i] + '.png';
         cardImg.classList.add('playable');
-        cardImg.addEventListener('click', handleCardClick);
+        cardImg.addEventListener('click', handleCardClick); // HERE
         divPlayer.append(cardImg);
     }
 
@@ -210,7 +221,9 @@ display = () => {
     }
 }
 toggleSelection = () => {
+    console.log('Selection is toggled from : '+isSelectionEnabled);
     isSelectionEnabled = !isSelectionEnabled;
+    console.log('To '+isSelectionEnabled);
     const cards = document.querySelectorAll('.playable img');
 
     if (!isSelectionEnabled) {
@@ -233,6 +246,7 @@ shooterPlay = async () => {
         display();
         await waitForButtonClick();
         console.log('before emitting');
+        console.log(discardStack);
         emit(socket,'move',playerHand,aiHand,discardStack);
         disableKeepButton();
     }
@@ -254,7 +268,6 @@ shooterPlay = async () => {
         display();
     }
     isShooter = !isShooter;
-    toggleSelection();
 }
 
 waitForButtonClick = () => {
@@ -427,6 +440,12 @@ disableKeepButton = () => {
 function handleKeepEvent() {
     isButtonClicked = true;
     console.log('Player played');
+}
+addToPlayerConsumedCards = (card) => {
+    playerConsumedCards.push(card);
+}
+addToAiConsumedCards = (card) => {
+    aiConsumedCards.push(card);
 }
 
 function emit(socket, event, arg,arg1,arg2){
