@@ -1,78 +1,83 @@
-const express = require('express');
 const http = require('http');
-const {Server} = require('socket.io');
+const express = require('express');
 const app = express();
+const {Server} = require('socket.io');
+const { rmSync } = require('fs');
 const server = http.createServer(app);
-const io = new Server(server)
-
+const io = new Server(server);
 app.use(express.static('./public'));
-// Server configurations
-
 
 var users = [];
 var isShooter = undefined;
 var deck = [];
 
 
-io.on('connection', (socket)=>{
-
-    console.log('New connection ... ID:'+socket.id);
+io.on('connection',(socket)=>{
+    console.log(`user ${socket.id} connected`);
     users.push(socket.id);
-
     socket.on('disconnect',()=>{
         console.log(`User : ${socket.id} disconnected`);
         users=users.filter((element)=>element == socket.id);
-        //socket.emit('gameOver',()=>{
-        //});
-
     })
-    
-    if (users.length > 1) { // Problem may be with users.length and how it is implemented
 
-        io.to(users[0]).emit('getGameModeValue');
+    if(users.length >= 2){
+        io.to(users[0]).timeout(5000).emit('getGameModeValue',(err,response)=>{
+            if(err){
+                console.log(`getGameModeValue error:`+ err);
+                throw err;
+            }
+            console.log('getGameModeValue request returned with response : '+response);
+        });
         playerShooter();
         createDeck();
-        shuffleDeck(); // GameModeValue is received from user[0] but never send to user[1];
-        io.emit('deck',deck);
+        shuffleDeck();
+        io.timeout(5000).emit('deck',deck,(err,res)=>{
+            if(err){
+                console.log('deck emit return error :'+err);
+            }
+            else{
+                console.log(`deck emit returned response :`+res);
+            }
+        })
+
     }
-
-    socket.on('GameModeValue', (value) => {
-        io.emit('startGame',value);
-    });
-
-    socket.on('move',(playerHand, aiHand, tray,callback)=>{
-        console.log(`this socket ${socket.id}`);
-        console.log('something was received here');
-        console.log(tray);
-        callback();
-        io.emit('move',playerHand, aiHand, tray,(acknowledgmentData)=>{
-            console.log('Emission to all clients acknowledged with data:'+acknowledgmentData);
-        });
+    socket.on('gameModeValue',(value)=>{
+        io.timeout(5000).emit('startGame',value);
     })
+
+    socket.on('move',(playerHand,aiHand,discardStack,callback)=>{
+        console.log('Received all data :'+playerHand+aiHand+discardStack);
+        callback('Received move event on the server OK');
+        let receiver = socket.id == users[0] ? users[1] : users[0];
+        io.to(receiver).timeout(5000).emit('move',playerHand,aiHand,discardStack,(err,res)=>{
+            if(err){
+                console.log(`Move event emitted from server to client got error :${err}`);
+            }
+            else{
+                console.log(`Move event emitted from server to client was received with status : ${res}`);
+            }
+        })
+    });
 });
+
 
 
 
 server.listen(5500,()=>{
-    console.log('Server is listening on port 5500');
-});
-
-
-
+    console.log('Server is listening on port 5500 ...');
+})
 
 
 const playerShooter =()=>{
     let shooter = Math.floor(Math.random()*2)=== 1 ? true : false;
-    io.to(users[0]).emit('shooter',shooter);
-    io.to(users[1]).emit('shooter',!shooter);
+    io.to(users[0]).timeout(5000).emit('shooter',shooter,(err,res)=>{if(err){console.log(err)}else{console.log(res)}});
+    io.to(users[1]).timeout(5000).emit('shooter',!shooter,(err,res)=>{if(err){console.log(err)}else{console.log(res)}})
     if(shooter){
-        isShooter = users[0];
-    }
-    else{
         isShooter = users[1];
     }
-}
-
+    else{
+        isShooter = users[0];
+    }}
 const createDeck = () => {
     deck = [];
     const cardType = ['C', 'D', 'H', 'S'];
@@ -83,7 +88,6 @@ const createDeck = () => {
         }
     }
 }
-
 const shuffleDeck = () => {
     for (let i = 0; i < deck.length; i++) {
         let random = Math.floor(Math.random() * deck.length);
