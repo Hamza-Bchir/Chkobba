@@ -68,6 +68,7 @@ async function playGame(){
             }
             trayCleaning(); // This function must be reviewed
             updateScore();
+            displayScore();
             // Another deck most be received
         }
     }
@@ -433,4 +434,67 @@ trayCleaning = () => {
         }
     }
     display();
+}
+updateScore = () => {
+    console.log('score updated')
+    const diamondCards = playerConsumedCards.filter((card) => getTypeFromCard(card) === 'D');
+    const sevenCards = playerConsumedCards.filter((card) => getValueFromCard(card) === 7);
+    const sixCards = playerConsumedCards.filter((card) => getValueFromCard(card) === 6);
+    const hayaCard = playerConsumedCards.includes('7-D');
+
+    if (diamondCards.length > 5) {
+        playerScore++;
+    }
+    else if (diamondCards.length < 5) {
+        aiScore++;
+    }
+
+    if (sevenCards.length > 2) {
+        playerScore++;
+    }
+    else if (sevenCards.length === 2) {
+        if (sixCards.length > 2) {
+            playerScore++;
+        }
+        else if (sixCards.length < 2) {
+            aiScore++;
+        }
+    }
+    else {
+        aiScore++;
+    }
+
+    if (hayaCard) {
+        playerScore++;
+    }
+    else {
+        aiScore++;
+    }
+
+    if (playerConsumedCards.length > 20) {
+        playerScore++;
+    }
+    else if (playerConsumedCards.length < 20) {
+        aiScore++;
+    }
+}
+displayScore =() =>{
+    scoreTitleElement= document.getElementById('score');
+    scoreTitleElement.innerHTML='Bot : '+aiScore+' Player : '+playerScore;
+}
+function displayWinner(){
+    var winnerMessageElement = document.getElementById("winner-message");
+    var winnerNameElement = document.getElementById("winner-name");
+    var winnerNameImageElement1 = document.getElementById('winner-name1');
+
+    if (playerScore > aiScore) {
+        let winnerName = 'ربحت يا وحش';
+        winnerNameElement.textContent = winnerName;
+        winnerNameImageElement1.src='./images/mdc.png';
+    } else {
+        let winnerName = 'للأسف خسرت';
+        winnerNameElement.textContent = winnerName;
+        winnerNameImageElement1.src='./images/rvc.png'
+    }
+    winnerMessageElement.style.display = "block";
 }
