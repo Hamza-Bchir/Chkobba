@@ -18,10 +18,11 @@ let playerConsumedCards =  [];
 let aiChkobbaCount = 0;
 let playerChkobbaCount = 0;
 
-let aiScore = 0;
-let playerScore = 0;
+let aiScore = 10;
+let playerScore = 10;
 
 let isSelectionEnabled = false;
+let deck_received = false;
 
 
 
@@ -39,19 +40,22 @@ socket.on('shooter',(value,callback)=>{
 })
 socket.on('deck',(deckRec,callback)=>{
     deck= deckRec;
+    deck_received = true;
     callback('deck received with success !'+deck);
 })
-socket.on('move',(aiHandRec,playerHandRec,discardStackRec,callback)=>{
+socket.on('move',(aiHandRec,playerHandRec,discardStackRec,isPlayerLastAteRec,callback)=>{
     aiHand = aiHandRec;
     playerHand = playerHandRec;
     discardStack = discardStackRec;
     isButtonClicked = true;
+    isPlayerLastAte = !isPlayerLastAteRec;
     callback('Move event received with success on the client side');
 });
 
 
 
 async function playGame(){
+    deck_received = false;
     layButton();
     while(aiScore < gameModeValue && playerScore < gameModeValue){
         aiConsumedCards = [];
@@ -66,11 +70,12 @@ async function playGame(){
             while (aiHand.length || playerHand.length){
                 await playerPlay();
             }
-            trayCleaning(); // This function must be reviewed
-            updateScore();
-            displayScore();
-            // Another deck most be received
         }
+        socket.emit('getDeck');
+        trayCleaning();
+        updateScore();
+        displayScore();
+        await waitDeckReceived();
     }
     displayWinner(); // Emit gameOver may be needed
 }
@@ -81,7 +86,7 @@ async function playerPlay(){
         console.log('im here');
         console.log(isButtonClicked);
         await waitForButtonClick();
-        socket.emit('move',playerHand,aiHand,discardStack,(res)=>{console.log('(Players Play phase)Server responded with status :')});
+        socket.emit('move',playerHand,aiHand,discardStack,isPlayerLastAte,(res)=>{console.log('(Players Play phase)Server responded with status :'+res)});
         console.log('taadit el waitForButton playerPlay')
     }
     else{
@@ -99,7 +104,7 @@ shooterPlay = async () => {
         addToPlayerHand(shootedCard);
         display();
         await waitForButtonClick();
-        socket.emit('move',playerHand,aiHand,discardStack,(res)=>{console.log('(shooting phase)Server responded with status :')});
+        socket.emit('move',playerHand,aiHand,discardStack,true,(res)=>{console.log('(shooting phase)Server responded with status :'+res)});
         disableKeepButton();
     }
     else {
@@ -263,6 +268,17 @@ waitForButtonClick = () => {
         }, 100); // Check every 100 milliseconds
     });
 };
+waitDeckReceived = () =>{
+    return new Promise((resolve)=>{
+        let intervalId = setInterval(()=>{
+            if(deck_received){
+                clearInterval(intervalId);
+                deck_received = false;
+                resolve();
+            }
+        },100);
+    });
+}
 addToPlayerHand = (card) => {
     if (playerHand.length == 3)
         return;
@@ -421,6 +437,7 @@ getGameModeValue = () => {
     gameModeValue = modeParam.includes('classic') ? 21 : 11;
 }
 trayCleaning = () => {
+    console.log(isPlayerLastAte);
     if (isPlayerLastAte) {
         while (discardStack.length) {
             addToPlayerConsumedCards(discardStack[0])
@@ -429,8 +446,8 @@ trayCleaning = () => {
     }
     else {
         while (discardStack.length) {
-                addToPlayerConsumedCards(discardStack[0])
-                removeFromDiscardStack(discardStack[0])
+            addToAiConsumedCards(discardStack[0]);
+            removeFromDiscardStack(discardStack[0])
         }
     }
     display();
@@ -480,7 +497,7 @@ updateScore = () => {
 }
 displayScore =() =>{
     scoreTitleElement= document.getElementById('score');
-    scoreTitleElement.innerHTML='Bot : '+aiScore+' Player : '+playerScore;
+    scoreTitleElement.innerHTML='You : '+playerScore+' Opponent : '+aiScore;
 }
 function displayWinner(){
     var winnerMessageElement = document.getElementById("winner-message");

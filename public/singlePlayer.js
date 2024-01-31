@@ -143,14 +143,14 @@ trayCleaning = () => {
     //console.log('isPlayerLastAte :'+isPlayerLastAte)
     if (isPlayerLastAte) {
         while (discardStack.length) {
-            addToPlayerConsumedCards(discardStack[0])
-            removeFromDiscardStack(discardStack[0])
+            addToPlayerConsumedCards(discardStack[0]);
+            removeFromDiscardStack(discardStack[0]);
         }
     }
     else {
         while (discardStack.length) {
-                addToPlayerConsumedCards(discardStack[0])
-                removeFromDiscardStack(discardStack[0])
+                addToAiConsumedCards(discardStack[0]);
+                removeFromDiscardStack(discardStack[0]);
         }
     }
     display();

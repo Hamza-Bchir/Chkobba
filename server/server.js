@@ -2,13 +2,11 @@ const http = require('http');
 const express = require('express');
 const app = express();
 const {Server} = require('socket.io');
-const { rmSync } = require('fs');
 const server = http.createServer(app);
 const io = new Server(server);
 app.use(express.static('./public'));
 
 var users = [];
-var isShooter = undefined;
 var deck = [];
 
 
@@ -45,11 +43,11 @@ io.on('connection',(socket)=>{
         io.timeout(5000).emit('startGame',value);
     })
 
-    socket.on('move',(playerHand,aiHand,discardStack,callback)=>{
+    socket.on('move',(playerHand,aiHand,discardStack,isPlayerLastAte,callback)=>{
         console.log('Received all data :'+playerHand+aiHand+discardStack);
         callback('Received move event on the server OK');
         let receiver = socket.id == users[0] ? users[1] : users[0];
-        io.to(receiver).timeout(5000).emit('move',playerHand,aiHand,discardStack,(err,res)=>{
+        io.to(receiver).timeout(5000).emit('move',playerHand,aiHand,discardStack,isPlayerLastAte,(err,res)=>{
             if(err){
                 console.log(`Move event emitted from server to client got error :${err}`);
             }
@@ -57,6 +55,24 @@ io.on('connection',(socket)=>{
                 console.log(`Move event emitted from server to client was received with status : ${res}`);
             }
         })
+    });
+
+    socket.on('getDeck',(err)=>{
+        if(err){
+            console.log('getDeck reception server error: '+err);
+        }
+        else{
+            createDeck();
+            shuffleDeck();
+            socket.emit('deck',deck,(err,res)=>{
+                if(err){
+                    console.log('Server error :'+err);
+                }
+                else{
+                    console.log('Reponse returned from client : '+res);
+                }
+            });
+        }
     });
 });
 
@@ -72,12 +88,7 @@ const playerShooter =()=>{
     let shooter = Math.floor(Math.random()*2)=== 1 ? true : false;
     io.to(users[0]).timeout(5000).emit('shooter',shooter,(err,res)=>{if(err){console.log(err)}else{console.log(res)}});
     io.to(users[1]).timeout(5000).emit('shooter',!shooter,(err,res)=>{if(err){console.log(err)}else{console.log(res)}})
-    if(shooter){
-        isShooter = users[1];
-    }
-    else{
-        isShooter = users[0];
-    }}
+}
 const createDeck = () => {
     deck = [];
     const cardType = ['C', 'D', 'H', 'S'];
